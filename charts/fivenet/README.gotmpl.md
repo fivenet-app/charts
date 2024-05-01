@@ -3,7 +3,7 @@ title: FiveNet Helm Chart
 ---
 {{ template "generatedDocsWarning" . }}
 
-Installs [FiveNet](https://github.com/galexrt/fivenet).
+Installs [FiveNet](https://github.com/fivenet-app/fivenet).
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ See the [Helm support matrix](https://helm.sh/docs/topics/version_skew/) for mor
 ## Installing
 
 ```console
-helm repo add fivenet https://galexrt.moe/fivenet/
+helm repo add fivenet https://fivenet.app/charts
 helm install fivenet/fivenet -f values.yaml
 
 # Or upgrade

@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="FiveNet Logo" src="src/public/images/social-card.png" width="640" />
+    <img alt="FiveNet Logo" src="https://raw.githubusercontent.com/FiveNet-app/.github/main/social-card.png" width="640" />
 </p>
 
 # charts

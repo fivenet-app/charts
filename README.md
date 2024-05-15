@@ -4,6 +4,8 @@
 
 # charts
 
+![Helm Logo](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=Helm&labelColor=0F1689)
+
 FiveNet Helm charts repository.
 
 ```

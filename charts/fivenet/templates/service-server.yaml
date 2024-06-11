@@ -18,10 +18,6 @@ spec:
       port: 7070
       protocol: TCP
       targetPort: metrics
-    - name: grpc
-      port: 9090
-      protocol: TCP
-      targetPort: grpc
   selector:
     app.kubernetes.io/component: server
     {{- include "fivenet.selectorLabels" . | nindent 4 }}

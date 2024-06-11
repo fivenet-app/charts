@@ -51,9 +51,6 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-            - name: grpc
-              containerPort: 9090
-              protocol: TCP
             - name: metrics
               containerPort: 7070
               protocol: TCP

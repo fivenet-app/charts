@@ -38,9 +38,6 @@ spec:
         - name: fivenet
           args:
             - server
-            {{- if .Values.server.serveFrontend }}
-            - --serve-frontend
-            {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"

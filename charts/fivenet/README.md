@@ -122,7 +122,6 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `server.replicaCount` |  | `1` |
 | `server.resources` |  | `{}` |
 | `server.revisionHistoryLimit` |  | `1` |
-| `server.serveFrontend` |  | `false` |
 | `server.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `server.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
 | `server.serviceMonitor.namespaceSelector` |  | `nil` |

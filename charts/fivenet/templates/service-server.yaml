@@ -8,12 +8,10 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-  {{- if .Values.server.serveFrontend }}
     - name: http
       port: 8080
       protocol: TCP
       targetPort: http
-    {{- end }}
     - name: metrics
       port: 7070
       protocol: TCP

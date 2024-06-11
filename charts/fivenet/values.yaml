@@ -51,8 +51,7 @@ ingress:
       paths:
         - path: /api
           pathType: Prefix
-          service: server
-          servicePort: http
+          serviceName: fivenet-server
         - path: /
           pathType: Prefix
   tls: []

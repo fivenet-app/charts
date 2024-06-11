@@ -98,8 +98,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `ingress.hosts[0].host` |  | `"chart-example.local"` |
 | `ingress.hosts[0].paths[0].path` |  | `"/api"` |
 | `ingress.hosts[0].paths[0].pathType` |  | `"Prefix"` |
-| `ingress.hosts[0].paths[0].service` |  | `"server"` |
-| `ingress.hosts[0].paths[0].servicePort` |  | `"http"` |
+| `ingress.hosts[0].paths[0].serviceName` |  | `"fivenet-server"` |
 | `ingress.hosts[0].paths[1].path` |  | `"/"` |
 | `ingress.hosts[0].paths[1].pathType` |  | `"Prefix"` |
 | `ingress.tls` |  | `[]` |

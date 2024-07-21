@@ -1,36 +1,36 @@
-{{- if .Values.frontend.serviceMonitor.enabled -}}
+{{- if .Values.server.serviceMonitor.enabled -}}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "fivenet.fullname" . }}
-{{- if .Values.frontend.serviceMonitor.namespace }}
-  namespace: {{ .Values.frontend.serviceMonitor.namespace }}
+{{- if .Values.server.serviceMonitor.namespace }}
+  namespace: {{ .Values.server.serviceMonitor.namespace }}
 {{- end }}
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
-  {{- if .Values.frontend.serviceMonitor.additionalLabels }}
-    {{- toYaml .Values.frontend.serviceMonitor.additionalLabels | nindent 4 }}
+  {{- if .Values.server.serviceMonitor.additionalLabels }}
+    {{- toYaml .Values.server.serviceMonitor.additionalLabels | nindent 4 }}
   {{- end }}
 spec:
   endpoints:
     - port: metrics
-      interval: {{ .Values.frontend.serviceMonitor.scrapeInterval }}
-    {{- if .Values.frontend.serviceMonitor.honorLabels }}
+      interval: {{ .Values.server.serviceMonitor.scrapeInterval }}
+    {{- if .Values.server.serviceMonitor.honorLabels }}
       honorLabels: true
     {{- end }}
-    {{- if .Values.frontend.serviceMonitor.metricRelabelings }}
-      metricRelabelings: {{ toYaml .Values.frontend.serviceMonitor.metricRelabelings | nindent 8 }}
+    {{- if .Values.server.serviceMonitor.metricRelabelings }}
+      metricRelabelings: {{ toYaml .Values.server.serviceMonitor.metricRelabelings | nindent 8 }}
     {{- end }}
-{{- if .Values.frontend.serviceMonitor.namespaceSelector }}
-  namespaceSelector: {{ toYaml .Values.frontend.serviceMonitor.namespaceSelector | nindent 4 }}
+{{- if .Values.server.serviceMonitor.namespaceSelector }}
+  namespaceSelector: {{ toYaml .Values.server.serviceMonitor.namespaceSelector | nindent 4 }}
 {{ else }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
 {{- end }}
-{{- if .Values.frontend.serviceMonitor.targetLabels }}
+{{- if .Values.server.serviceMonitor.targetLabels }}
   targetLabels:
-  {{- range .Values.frontend.serviceMonitor.targetLabels }}
+  {{- range .Values.server.serviceMonitor.targetLabels }}
     - {{ . }}
   {{- end }}
 {{- end }}

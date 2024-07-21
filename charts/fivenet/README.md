@@ -40,29 +40,6 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `discord.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
 | `extraObjects` | Extra objects to deploy (value evaluated as a template) | `[]` |
 | `fivenet.config` | FiveNet config | `{"audit":{"retentionDays":90},"auth":{"superuserGroups":["projektleiter","teamleitung"],"superuserUsers":[]},"cache":{"refreshTime":"2m"},"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","custom":{"columns":{"user":{"playtime":"playtime","visum":"visum"},"vehicle":{"model":"model"}},"conditions":{"user":{"filterEmptyName":false}}},"dsn":"DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin","maxIdleConns":5,"maxOpenConns":32},"discord":{"commands":{"enabled":true},"enabled":true,"groupSync":{"enabled":false,"mapping":{}},"presence":{"gameStatus":"FiveNet"},"token":"your_discord_bot_token","userInfoSync":{"employeeRoleFormat":"%s Personal","enabled":false,"gradeRoleFormat":"[%grade%] %grade_label%","jobsAbsceneRoleName":"Absent","nicknameRegex":"^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"}},"dispatchCenter":{"convertJobs":[]},"http":{"adminListen":":7070","listen":":8080","origins":["https://fivenet.example.com"],"publicURL":"https://fivenet.example.com","sessions":{"cookieSecret":"your_generated_cookie_secret","domain":"localhost"}},"imageProxy":{"cachePrefix":"images/","enabled":true,"options":{"allowHosts":[],"denyHosts":[]},"url":"/api/image_proxy/"},"jwt":{"secret":"your_generated_jwt_secret"},"logLevel":"INFO","mode":"release","nats":{"url":"nats://localhost:4222"},"oauth2":{"providers":[]},"storage":{"filesystem":{"path":"/data"},"s3":{"accessKeyID":"","bucketName":"","endpoint":"","prefix":"","region":"us-east-1","secretAccessKey":"","useSSL":true},"type":"filesystem"},"tracing":{"attributes":[],"enabled":false,"environment":"live","insecure":false,"ratio":0.1,"timeout":"10s","type":"stdout","url":"https://localhost:4317"}}` |
-| `frontend.additionalEnv` |  | `[]` |
-| `frontend.enabled` |  | `true` |
-| `frontend.image.pullPolicy` |  | `"IfNotPresent"` |
-| `frontend.image.repository` |  | `"docker.io/galexrt/fivenet"` |
-| `frontend.image.tag` |  | `""` |
-| `frontend.livenessProbe.failureThreshold` |  | `3` |
-| `frontend.livenessProbe.httpGet.path` |  | `"/readiness"` |
-| `frontend.livenessProbe.httpGet.port` |  | `"metrics"` |
-| `frontend.livenessProbe.initialDelaySeconds` |  | `25` |
-| `frontend.livenessProbe.periodSeconds` |  | `10` |
-| `frontend.readinessProbe` |  | `nil` |
-| `frontend.replicaCount` |  | `1` |
-| `frontend.resources` |  | `{}` |
-| `frontend.revisionHistoryLimit` |  | `1` |
-| `frontend.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
-| `frontend.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
-| `frontend.serviceMonitor.namespaceSelector` |  | `nil` |
-| `frontend.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
-| `frontend.startupProbe.failureThreshold` |  | `30` |
-| `frontend.startupProbe.httpGet.path` |  | `"/readiness"` |
-| `frontend.startupProbe.httpGet.port` |  | `"metrics"` |
-| `frontend.startupProbe.initialDelaySeconds` |  | `20` |
-| `frontend.startupProbe.periodSeconds` |  | `10` |
 | `fullnameOverride` |  | `""` |
 | `iconify.additionalEnv[0].name` |  | `"ICONIFY_SOURCE"` |
 | `iconify.additionalEnv[0].value` |  | `"full"` |

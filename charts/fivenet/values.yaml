@@ -149,7 +149,7 @@ fivenet:
         #  endpoints:
         #    authURL: "https://discord.com/api/oauth2/authorize"
         #    tokenURL: "https://discord.com/api/oauth2/token"
-    #postalsFile: ".output/public/data/postals.json"
+    postalsFile: ".output/data/postals.json"
     auth:
       superuserGroups:
         - projektleiter

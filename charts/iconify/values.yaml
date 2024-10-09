@@ -87,14 +87,8 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-livenessProbe:
-  httpGet:
-    path: /version
-    port: http
-readinessProbe:
-  httpGet:
-    path: /version
-    port: http
+livenessProbe: null
+readinessProbe:  null
 
 autoscaling:
   enabled: false

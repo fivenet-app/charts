@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "iconify.fullname" . }}-test-connection"
+  labels:
+    {{- include "iconify.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "iconify.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

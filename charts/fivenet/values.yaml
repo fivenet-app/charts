@@ -38,7 +38,9 @@ tolerations: []
 affinity: {}
 
 ingress:
+  # -- If an ingress object should be created.
   enabled: true
+  # -- Ingress class name
   className: "nginx"
   annotations: {}
     # kubernetes.io/ingress.class: nginx
@@ -194,7 +196,7 @@ server:
   replicaCount: 1
   revisionHistoryLimit: 1
   image:
-    repository: docker.io/galexrt/fivenet
+    repository: ghcr.io/fivenet-app/fivenet
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -241,12 +243,14 @@ server:
     scrapeInterval: 30s
     # honorLabels: true
 
+# -- Iconify helm chart options, please see https://github.com/fivenet-app/charts/tree/main/charts/iconify for more information
 iconify:
   enabled: true
   ingress:
     enabled: true
     className: "nginx"
     annotations:
+      # If you use a different ingress controller you must adjust this annotation
       nginx.ingress.kubernetes.io/rewrite-target: /$2
     hosts:
       - host: chart-example.local
@@ -257,37 +261,6 @@ iconify:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-  replicaCount: 1
-  revisionHistoryLimit: 1
-  image:
-    repository: docker.io/iconify/api
-    pullPolicy: IfNotPresent
-    tag: latest
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-  livenessProbe: null
-  readinessProbe: null
-  startupProbe: null
-  additionalEnv:
-    - name: ICONIFY_SOURCE
-      value: "full"
-    - name: REDIRECT_INDEX
-      value: "/about"
-    - name: ALLOW_UPDATE
-      value: "false"
-    - name: ENABLE_ICON_LISTS
-      value: "false"
-    - name: ENABLE_SEARCH_ENGINE
-      value: "false"
 
 # -- FiveNet Worker deployment config
 worker:
@@ -295,7 +268,7 @@ worker:
   replicaCount: 1
   revisionHistoryLimit: 1
   image:
-    repository: docker.io/galexrt/fivenet
+    repository: ghcr.io/fivenet-app/fivenet
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -347,7 +320,7 @@ discord:
   replicaCount: 1
   revisionHistoryLimit: 1
   image:
-    repository: docker.io/galexrt/fivenet
+    repository: ghcr.io/fivenet-app/fivenet
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -412,6 +385,7 @@ nats:
         enabled: true
         # ensure that container has a sufficient memory limit greater than maxSize
         maxSize: 64Mi
+
     merge:
       accounts:
         fivenet:
@@ -420,7 +394,9 @@ nats:
             # You should change the username and password
             - user: "fivenet"
               password: "fivenet"
-      max_payload: 3145728 # user tracker can create big updates at the moment
+      # User tracker can create big update events
+      max_payload: 3145728
+
   promExporter:
     enabled: true
     image:

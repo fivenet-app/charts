@@ -89,11 +89,11 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /version
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /version
     port: http
 
 autoscaling:

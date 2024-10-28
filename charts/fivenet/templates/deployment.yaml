@@ -37,7 +37,7 @@ spec:
       containers:
         - name: fivenet
           args:
-            - server
+            {{- toYaml .Values.server.args | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"

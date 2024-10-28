@@ -37,8 +37,7 @@ spec:
       containers:
         - name: fivenet
           args:
-            - worker
-            - --module-discord-bot=false
+            {{- toYaml .Values.worker.args | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"

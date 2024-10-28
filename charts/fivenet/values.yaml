@@ -62,7 +62,7 @@ ingress:
   #      - chart-example.local
 
 fivenet:
-  # -- FiveNet config
+  # -- FiveNet config, make sure to checkout the [config reference documentation](https://fivenet.app/getting-started/configuration/config-reference)
   config:
     logLevel: "INFO"
     # debug or release
@@ -223,7 +223,11 @@ server:
     failureThreshold: 30
     initialDelaySeconds: 20
     periodSeconds: 10
+  # -- Additional environment variables
   additionalEnv: []
+  # -- Arguments to pass to the container command
+  args:
+    - server
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created
     enabled: false
@@ -239,25 +243,6 @@ server:
     # -- (duration) Interval at which metrics should be scraped
     scrapeInterval: 30s
     # honorLabels: true
-
-# -- Iconify helm chart options, please see https://github.com/fivenet-app/charts/tree/main/charts/iconify for more information
-iconify:
-  enabled: true
-  ingress:
-    enabled: true
-    className: "nginx"
-    annotations:
-      # If you use a different ingress controller you must adjust this annotation
-      nginx.ingress.kubernetes.io/rewrite-target: /$2
-    hosts:
-      - host: chart-example.local
-        paths:
-          - path: /api/icons(/|$)(.*)
-            pathType: Prefix
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
 
 # -- FiveNet Worker deployment config
 worker:
@@ -294,7 +279,11 @@ worker:
     initialDelaySeconds: 5
     failureThreshold: 20
     periodSeconds: 10
+  # -- Additional environment variables
   additionalEnv: []
+  # -- Arguments to pass to the container command
+  args:
+    - worker
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created
     enabled: false
@@ -346,7 +335,11 @@ discord:
     initialDelaySeconds: 5
     failureThreshold: 20
     periodSeconds: 10
+  # -- Additional environment variables
   additionalEnv: []
+  # -- Arguments to pass to the container command
+  args:
+    - discord
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created
     enabled: false
@@ -362,6 +355,25 @@ discord:
     # -- (duration) Interval at which metrics should be scraped
     scrapeInterval: 30s
     # honorLabels: true
+
+# -- Iconify helm chart options, please see https://github.com/fivenet-app/charts/tree/main/charts/iconify for more information
+iconify:
+  enabled: true
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      # If you use a different ingress controller you must adjust this annotation
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /api/icons(/|$)(.*)
+            pathType: Prefix
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
 
 # -- NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values
 nats:

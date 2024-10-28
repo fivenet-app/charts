@@ -37,12 +37,7 @@ spec:
       containers:
         - name: fivenet
           args:
-            - worker
-            - --module-discord-bot=true
-            - --module-audit-retention=false
-            - --module-centrum-bot=false
-            - --module-centrum-housekeeper=false
-            - --module-user-tracker=false
+            {{- toYaml .Values.discord.args | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.discord.image.repository }}:{{ .Values.discord.image.tag | default .Chart.AppVersion }}"

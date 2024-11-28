@@ -4,7 +4,7 @@
 
 # charts
 
-![Helm Logo](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=Helm&labelColor=0F1689)
+[![Container Images on GHCR.io](https://img.shields.io/badge/Container%20Images%20on-GHCR.io-blue)](https://github.com/fivenet-app/fivenet/pkgs/container/fivenet) [![Helm Logo](https://img.shields.io/badge/Helm%20Chart%20-available?logo=Helm&labelColor=0F1689)](https://github.com/FiveNet-app/charts) [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white)](https://discord.gg/ASRPPr8CeT) [![fivenet.app Website](https://img.shields.io/badge/Website-fivenet.app-purple)](https://fivenet.app)
 
 FiveNet Helm charts repository.
 

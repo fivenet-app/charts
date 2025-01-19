@@ -64,11 +64,15 @@ ingress:
 fivenet:
   # -- FiveNet config, make sure to checkout the [config reference documentation](https://fivenet.app/getting-started/configuration/config-reference)
   config:
+    #
+    # Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
+    #
     logLevel: "INFO"
     # debug or release
     mode: "release"
     tracing:
       enabled: false
+      # Can be "stdout", "otlptracegrpc", "otlptracehttp"
       type: "stdout"
       # OTLP Tracing endpoint URL
       url: "https://localhost:4317"
@@ -77,26 +81,30 @@ fivenet:
       environment: "live"
       ratio: 0.1
       attributes: []
+      # - service.name=fivenet-server
     http:
       listen: ":8080"
       adminListen: ":7070"
-      sessions:
-        cookieSecret: "your_generated_cookie_secret"
-        domain: "localhost"
       publicURL: "https://fivenet.example.com"
       origins:
         - "https://fivenet.example.com"
         #- "http://localhost:3000" # Only for development
+      trustedProxies: []
+        #- "127.0.0.1" # Only for development
+      sessions:
+        cookieSecret: "your_generated_cookie_secret"
+        domain: "fivenet.example.com"
     database:
-      # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+      # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
       dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
-      # For the local test database using `docker-compose`
-      #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
       maxOpenConns: 32
       maxIdleConns: 5
       connMaxIdleTime: 15m
       connMaxLifetime: 60m
+      # Must be enabled if using a gameserver database (with ESX tables) and not wanting to use the dbsync
+      esxCompat: true
       custom:
+        # To disable a column, set it to `"-"`
         columns:
           user:
             visum: "visum"
@@ -107,14 +115,15 @@ fivenet:
           user:
             filterEmptyName: false
     nats:
-      # If you change the NATS username or password, below `nats:` config section
-      url: "nats://localhost:4222"
+      # This NATS url is for using the NATS server from the `docker-compose.yaml`
+      url: "nats://fivenet:fivenet_topsecret@nats:4222"
+      replicas: 1
     jwt:
       secret: "your_generated_jwt_secret"
     storage:
       type: "filesystem"
       filesystem:
-        path: "/data"
+        path: ".data/"
       s3:
         endpoint: ""
         region: "us-east-1"
@@ -136,22 +145,22 @@ fivenet:
       retentionDays: 90
     oauth2:
       providers: []
-        #- name: "discord"
-        #  label: "Discord"
-        #  homepage: "https://discord.com"
-        #  icon: "i-simple-icons-discord" # or a URL to an image
-        #  #defaultAvatar: ""
-        #  type: "discord"
-        #  redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
-        #  clientID: "your_discord_oauth2_client_id"
-        #  clientSecret: "your_discord_oauth2_client_secret"
-        #  scopes:
-        #    - openid
-        #    - identify
-        #  endpoints:
-        #    authURL: "https://discord.com/api/oauth2/authorize"
-        #    tokenURL: "https://discord.com/api/oauth2/token"
-    postalsFile: ".output/data/postals.json"
+      #  - name: "discord"
+      #    label: "Discord"
+      #    homepage: "https://discord.com"
+      #    icon: "i-simple-icons-discord" # or an image URL
+      #    #defaultAvatar: ""
+      #    type: "discord"
+      #    redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
+      #    clientID: "your_discord_oauth2_client_id"
+      #    clientSecret: "your_discord_oauth2_client_secret"
+      #    scopes:
+      #      - openid
+      #      - identify
+      #    endpoints:
+      #      authURL: "https://discord.com/api/oauth2/authorize"
+      #      tokenURL: "https://discord.com/api/oauth2/token"
+    postalsFile: ".output/public/data/postals.json"
     auth:
       superuserGroups:
         - projektleiter
@@ -161,32 +170,37 @@ fivenet:
       convertJobs: []
         #- police
     discord:
-      enabled: true
+      enabled: false
       token: "your_discord_bot_token"
       userInfoSync:
         enabled: false
         gradeRoleFormat: "[%grade%] %grade_label%"
-        employeeRoleFormat: "%s Personal"
-        nicknameRegex: |-
-          ^(?P<prefix>\[\S+][ ]*)?(?P<name>[^\[]+)(?P<suffix>[ ]*\[\S+])?
+        employeeRoleFormat: "%s Employees"
+        unemployedRoleName: "Citizen"
+        nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
         jobsAbsceneRoleName: "Absent"
       groupSync:
         enabled: false
-        mapping: {}
-          #fraktionsverwaltung:
-          #  roleName: "Fraktionsverwaltung"
-          #  permissions: 414690258631
-          #  color: "#9B59B6"
-          #  notSameJob: true
-          #teamleitung:
-          #  roleName: "Teamleitung"
-          #  permissions: 416032435935
-          #  color: "#9B59B6"
+        mapping:
+          fraktionsverwaltung:
+            roleName: "Fraktionsverwaltung"
+            #permissions: 0
+            #color: "#9B59B6"
+            notSameJob: true
+          teamleitung:
+            roleName: "Teamleitung"
+            #permissions: 0
+            #color: "#9B59B6"
       commands:
         enabled: true
     game:
-      # First grade "id", e.g., some ESX-based servers start at 0, but I have seen some start at 1
+      # First grade "number/id", some servers start at 0, but I have seen some start at 1
       startJobGrade: 0
+      defaultLocale: "en"
+    sync:
+      enabled: false
+      apiTokens: []
+        #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC
 
 server:
   enabled: true

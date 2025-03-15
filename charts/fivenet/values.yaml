@@ -50,9 +50,6 @@ ingress:
   hosts:
     - host: chart-example.local
       paths:
-        - path: /api
-          pathType: Prefix
-          serviceName: fivenet-server
         - path: /
           pathType: Prefix
   tls: []
@@ -75,7 +72,6 @@ ingressGRPC:
       paths:
         - path: /api
           pathType: Prefix
-          serviceName: fivenet-server
         - path: /
           pathType: Prefix
   tls: []

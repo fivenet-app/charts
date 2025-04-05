@@ -51,7 +51,7 @@ ingress:
     - host: chart-example.local
       paths:
         - path: /
-          pathType: Prefix
+          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -63,17 +63,15 @@ ingressGRPC:
   # -- Ingress class name
   className: "nginx"
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/use-regex: "true"
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
       paths:
-        - path: /api
-          pathType: Prefix
-        - path: /
-          pathType: Prefix
+        - path: /service.+
+          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -400,7 +398,7 @@ iconify:
       - host: chart-example.local
         paths:
           - path: /api/icons(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:

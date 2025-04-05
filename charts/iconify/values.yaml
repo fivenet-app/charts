@@ -69,7 +69,7 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
         #- path: /api/icons(/|$)(.*)
-        #  pathType: Prefix
+        #  pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

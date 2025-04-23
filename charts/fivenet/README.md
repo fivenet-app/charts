@@ -65,8 +65,8 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `nats` | NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values | `{"config":{"cluster":{"enabled":true,"replicas":3},"jetstream":{"enabled":true,"fileStore":{"enabled":true,"pvc":{"enabled":true,"size":"5Gi"}},"memoryStore":{"enabled":true,"maxSize":"64Mi"}},"merge":{"accounts":{"fivenet":{"jetstream":"enabled","users":[{"password":"fivenet","user":"fivenet"}]}},"max_payload":3145728}},"enabled":true,"promExporter":{"enabled":true,"image":{"repository":"docker.io/natsio/prometheus-nats-exporter","tag":"0.17.2"},"patch":[{"op":"replace","path":"/args","value":["-port=7777","-channelz","-connz","-routez","-subz","-varz","-prefix=nats","-serverz","-use_internal_server_id","-jsz=streams","-ri=15","http://localhost:8222/"]}],"podMonitor":{"enabled":false,"patch":[{"op":"add","path":"/spec/podMetricsEndpoints/0/interval","value":"30s"}]}}}` |
 | `nodeSelector` |  | `{}` |
 | `podAnnotations` |  | `{}` |
-| `podSecurityContext` |  | `{}` |
-| `securityContext` |  | `{}` |
+| `podSecurityContext.fsGroup` |  | `2000` |
+| `securityContext` | Security context (the provided values work with the official container image) https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsGroup":2000,"runAsNonRoot":true,"runAsUser":2000,"seccompProfile":{"type":"RuntimeDefault"}}` |
 | `server.additionalEnv` | Additional environment variables | `[]` |
 | `server.args` | Arguments to pass to the container command | `["server"]` |
 | `server.enabled` |  | `true` |

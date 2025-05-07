@@ -26,7 +26,7 @@ appVersion: v2025.4.8
 dependencies:
   - name: nats
     repository: https://nats-io.github.io/k8s/helm/charts/
-    version: 1.3.5
+    version: 1.3.6
     condition: nats.enabled
   - name: iconify
     repository: https://fivenet.app/charts/

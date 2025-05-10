@@ -446,7 +446,7 @@ nats:
     enabled: true
     image:
       repository: docker.io/natsio/prometheus-nats-exporter
-      tag: 0.17.2
+      tag: 0.17.3
 
     patch:
       - op: replace

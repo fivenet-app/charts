@@ -145,6 +145,7 @@ fivenet:
       type: "filesystem"
       filesystem:
         path: ".data/"
+        prefix: ""
       s3:
         endpoint: ""
         region: "us-east-1"
@@ -188,6 +189,7 @@ fivenet:
         - teamleitung
       superuserUsers: []
     dispatchCenter:
+      type: "gksphone"
       convertJobs: []
         #- police
     discord:

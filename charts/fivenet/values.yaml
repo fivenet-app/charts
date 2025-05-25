@@ -85,9 +85,6 @@ ingressGRPC:
 fivenet:
   # -- FiveNet config, make sure to checkout the [config reference documentation](https://fivenet.app/getting-started/configuration/config-reference)
   config:
-    #
-    # Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
-    #
     logLevel: "INFO"
     # debug or release
     mode: "release"
@@ -117,7 +114,8 @@ fivenet:
         domain: "fivenet.example.com"
     database:
       # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-      dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
+      # Please note that the `parseTime` parameter is allows set to true
+      dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
       maxOpenConns: 32
       maxIdleConns: 5
       connMaxIdleTime: 15m
@@ -154,6 +152,8 @@ fivenet:
         useSSL: true
         bucketName: ""
         prefix: ""
+    retries: 10
+    usePresigned: true
     imageProxy:
       enabled: true
       url: "/api/image_proxy/"
@@ -161,8 +161,6 @@ fivenet:
       options:
         allowHosts: []
         denyHosts: []
-    cache:
-      refreshTime: 2m
     audit:
       retentionDays: 90
     oauth2:
@@ -200,7 +198,6 @@ fivenet:
         gradeRoleFormat: "[%grade%] %grade_label%"
         employeeRoleFormat: "%s Employees"
         unemployedRoleName: "Citizen"
-        nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
         jobsAbsceneRoleName: "Absent"
       groupSync:
         enabled: false
@@ -219,6 +216,8 @@ fivenet:
     game:
       # First grade "number/id", some servers start at 0, but I have seen some start at 1
       startJobGrade: 0
+      # If enabled it will automatically delete roles which no jobs/grades are found for
+      cleanupRolesForMissingJobs: false
     sync:
       enabled: false
       apiTokens: []

@@ -56,9 +56,9 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `ingressGRPC.annotations."nginx.ingress.kubernetes.io/ssl-redirect"` |  | `"true"` |
 | `ingressGRPC.annotations."nginx.ingress.kubernetes.io/use-regex"` |  | `"true"` |
 | `ingressGRPC.className` | Ingress class name | `"nginx"` |
-| `ingressGRPC.enabled` | If an ingress object for GRPC API access should be created. Requires TLS certs for HTTPS. | `true` |
+| `ingressGRPC.enabled` | If an ingress object for GRPC API access should be created. Requires TLS certs for HTTPS and a separate subdomain. Used for DBSync and the plugin API. | `true` |
 | `ingressGRPC.hosts[0].host` |  | `"chart-example-grpc.local"` |
-| `ingressGRPC.hosts[0].paths[0].path` |  | `"/services/(.*)"` |
+| `ingressGRPC.hosts[0].paths[0].path` |  | `"/services(.*)"` |
 | `ingressGRPC.hosts[0].paths[0].pathType` |  | `"ImplementationSpecific"` |
 | `ingressGRPC.tls` |  | `[]` |
 | `nameOverride` |  | `""` |

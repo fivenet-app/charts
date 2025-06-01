@@ -63,7 +63,7 @@ ingress:
   #      - chart-example.local
 
 ingressGRPC:
-  # -- If an ingress object for GRPC API access should be created. Requires TLS certs for HTTPS.
+  # -- If an ingress object for GRPC API access should be created. Requires TLS certs for HTTPS and a separate subdomain. Used for DBSync and the plugin API.
   enabled: true
   # -- Ingress class name
   className: "nginx"
@@ -75,7 +75,7 @@ ingressGRPC:
   hosts:
     - host: chart-example-grpc.local
       paths:
-        - path: /services/(.*)
+        - path: /services(.*)
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls

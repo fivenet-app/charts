@@ -75,7 +75,7 @@ ingressGRPC:
   hosts:
     - host: chart-example.local
       paths:
-        - path: /service.+
+        - path: /services/(.*)
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls

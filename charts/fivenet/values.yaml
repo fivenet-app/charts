@@ -73,14 +73,14 @@ ingressGRPC:
     nginx.ingress.kubernetes.io/use-regex: "true"
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: chart-example-grpc.local
       paths:
         - path: /services/(.*)
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
-  #      - chart-example.local
+  #      - chart-example-grpc.local
 
 fivenet:
   # -- FiveNet config, make sure to checkout the [config reference documentation](https://fivenet.app/getting-started/configuration/config-reference)

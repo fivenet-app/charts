@@ -88,18 +88,23 @@ fivenet:
     logLevel: "INFO"
     # debug or release
     mode: "release"
-    tracing:
+    otlp:
       enabled: false
-      # Can be "stdout", "otlptracegrpc", "otlptracehttp"
+      # Can be "stdout", "grpc", "http"
       type: "stdout"
-      # OTLP Tracing endpoint URL
-      url: "https://localhost:4317"
+      # OTLP endpoint URL (don't include `http(s)://` when using "grpc" type)`)
+      url: "localhost:4317"
       insecure: false
       timeout: 10s
       environment: "live"
-      ratio: 0.1
+      ratio: 0.01
       attributes: []
       # - service.name=fivenet-server
+      headers: {}
+        # Example to authenticate with an API key
+        #Authorization: "API_KEY_HERE"
+      # Can be "none" or "gzip"
+      compression: "none"
     http:
       listen: ":8080"
       adminListen: ":7070"

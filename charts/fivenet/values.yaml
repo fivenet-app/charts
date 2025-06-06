@@ -70,6 +70,8 @@ ingressGRPC:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "2400"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "2400"
     nginx.ingress.kubernetes.io/use-regex: "true"
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -88,12 +90,14 @@ fivenet:
     logLevel: "INFO"
     # debug or release
     mode: "release"
+    # Must be 32 chars (bytes) long
+    secret: "your_generated_db_secret_32_char"
     otlp:
       enabled: false
       # Can be "stdout", "grpc", "http"
       type: "stdout"
       # OTLP endpoint URL (must include `http(s)://`)
-      url: "localhost:4317"
+      url: "http://localhost:4317"
       insecure: false
       timeout: 10s
       environment: "live"
@@ -145,6 +149,7 @@ fivenet:
             filterEmptyName: false
     nats:
       # This NATS url is for using the NATS server from the `docker-compose.yaml`
+      # If you change the NATS username or password, below `nats:` config section
       url: "nats://fivenet:fivenet_topsecret@nats:4222"
       replicas: 1
     jwt:
@@ -409,6 +414,7 @@ iconify:
     className: "nginx"
     annotations:
       # If you use a different ingress controller you must adjust this annotation
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/rewrite-target: /$2
     hosts:
       - host: chart-example.local

@@ -1,5 +1,23 @@
 {{- $fullName := include "fivenet.fullname" . -}}
 {{- if .Values.ingressGRPC.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-grpc
+  labels:
+    app.kubernetes.io/component: server
+    {{- include "fivenet.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/component: server
+    {{- include "fivenet.selectorLabels" . | nindent 4 }}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -32,7 +50,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ if .serviceName }}{{ .serviceName }}{{ else }}{{ $fullName }}{{ with .service }}-{{ . }}{{ end }}{{ end }}
+                name: {{ if .serviceName }}{{ .serviceName }}{{ else }}{{ $fullName }}-grpc{{ with .service }}-{{ . }}{{ end }}{{ end }}
                 port:
                   name: {{ if .servicePort }}{{ .servicePort }}{{ else }}http{{ end }}
           {{- end }}

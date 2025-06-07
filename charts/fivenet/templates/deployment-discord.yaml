@@ -43,7 +43,13 @@ spec:
           image: "{{ .Values.discord.image.repository }}:{{ .Values.discord.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.discord.image.pullPolicy }}
           env:
-            {{- toYaml .Values.discord.additionalEnv | nindent 12 }}
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          {{- with .Values.server.additionalEnv }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: metrics
               containerPort: 7070

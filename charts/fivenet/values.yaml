@@ -41,6 +41,18 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+  # Example soft pod anti affinity rule
+  #podAntiAffinity:
+  #  preferredDuringSchedulingIgnoredDuringExecution:
+  #    - podAffinityTerm:
+  #        labelSelector:
+  #          matchExpressions:
+  #            - key: app.kubernetes.io/name
+  #              operator: In
+  #              values:
+  #                - fivenet
+  #        topologyKey: kubernetes.io/hostname
+  #      weight: 100
 
 ingress:
   # -- If an ingress object should be created.
@@ -87,8 +99,9 @@ ingressGRPC:
 fivenet:
   # -- FiveNet config, make sure to checkout the [config reference documentation](https://fivenet.app/getting-started/configuration/config-reference)
   config:
+    # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
     logLevel: "INFO"
-    # debug or release
+    # Debug or release mode
     mode: "release"
     # Must be 32 chars (bytes) long
     secret: "your_generated_db_secret_32_char"
@@ -101,10 +114,10 @@ fivenet:
       insecure: false
       timeout: 10s
       environment: "live"
-      ratio: 0.01
+      ratio: 0.1
       attributes:
-        - k8s.namespace.name=${POD_NAMESPACE}
       # - service.name=fivenet-server
+        - k8s.namespace.name=${POD_NAMESPACE}
       headers: {}
         # Example to authenticate with an API key
         #authorization: "OTEL_API_KEY_HERE"
@@ -168,8 +181,8 @@ fivenet:
         useSSL: true
         bucketName: ""
         prefix: ""
-        retries: 10
-        usePresigned: true
+        retries: 3
+        checkOnStartup: false
     imageProxy:
       enabled: true
       url: "/api/image_proxy/"
@@ -191,7 +204,7 @@ fivenet:
       #    clientID: "your_discord_oauth2_client_id"
       #    clientSecret: "your_discord_oauth2_client_secret"
       #    scopes:
-      #      - openid
+      #      - guilds
       #      - identify
       #    endpoints:
       #      authURL: "https://discord.com/api/oauth2/authorize"

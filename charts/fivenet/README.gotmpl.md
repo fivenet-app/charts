@@ -24,6 +24,15 @@ helm upgrade --install fivenet/fivenet -f values.yaml
 
 For example settings, see the next section or [values.yaml](/charts/fivenet/values.yaml).
 
+### Must Change Values
+
+The following values must be changed before installing the chart:
+
+- `fivenet.config.secret`: The secret key used to encrypt certain data in the database. This should be exactly a 32 characters long, random string.
+- `fivenet.config.database.dsn`: The database connection string. This should be in the format `user:password@host:port/database`. Make sure to replace `user`, `password`, `host`, `port`, and `database` with your actual database credentials.
+- `fivenet.config.jwt.secret`: The secret key used to sign JSON Web Tokens (JWT). This should be a random string of at least 32 characters.
+- `fivenet.config.http.sessions.cookieSecret`: The secret key used to sign session cookies. This should be a random string of at least 32 characters.
+
 ## Configuration
 
 The following table lists the configurable parameters of the FiveNet chart and their default values.

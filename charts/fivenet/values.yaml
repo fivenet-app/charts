@@ -310,8 +310,10 @@ server:
     failureThreshold: 30
     initialDelaySeconds: 20
     periodSeconds: 10
-  # -- Additional environment variables
+  # -- Additional environment variables (e.g., to set the timezone via the TZ variable)
   additionalEnv: []
+    # - name: TZ
+    #   value: "Europe/Berlin"
   # -- Arguments to pass to the container command
   args:
     - server
@@ -366,7 +368,7 @@ worker:
     initialDelaySeconds: 5
     failureThreshold: 20
     periodSeconds: 10
-  # -- Additional environment variables
+  # -- Additional environment variables (e.g., to set the timezone via the TZ variable)
   additionalEnv: []
   # -- Arguments to pass to the container command
   args:
@@ -422,7 +424,7 @@ discord:
     initialDelaySeconds: 5
     failureThreshold: 20
     periodSeconds: 10
-  # -- Additional environment variables
+  # -- Additional environment variables (e.g., to set the timezone via the TZ variable)
   additionalEnv: []
   # -- Arguments to pass to the container command
   args:

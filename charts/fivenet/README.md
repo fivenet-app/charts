@@ -44,7 +44,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 |-----------|-------------|---------|
 | `affinity` |  | `{}` |
 | `discord` | FiveNet Discord Bot deployment config | `{"additionalEnv":[],"args":["discord"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
-| `discord.additionalEnv` | Additional environment variables | `[]` |
+| `discord.additionalEnv` | Additional environment variables (e.g., to set the timezone via the TZ variable) | `[]` |
 | `discord.args` | Arguments to pass to the container command | `["discord"]` |
 | `discord.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `discord.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
@@ -78,7 +78,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `podAnnotations` |  | `{}` |
 | `podSecurityContext.fsGroup` |  | `2000` |
 | `securityContext` | Security context (the provided values work with the official container image) https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsGroup":2000,"runAsNonRoot":true,"runAsUser":2000,"seccompProfile":{"type":"RuntimeDefault"}}` |
-| `server.additionalEnv` | Additional environment variables | `[]` |
+| `server.additionalEnv` | Additional environment variables (e.g., to set the timezone via the TZ variable) | `[]` |
 | `server.args` | Arguments to pass to the container command | `["server"]` |
 | `server.enabled` |  | `true` |
 | `server.image.pullPolicy` |  | `"IfNotPresent"` |
@@ -108,7 +108,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `serviceAccount.name` |  | `""` |
 | `tolerations` |  | `[]` |
 | `worker` | FiveNet Worker deployment config | `{"additionalEnv":[],"args":["worker"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
-| `worker.additionalEnv` | Additional environment variables | `[]` |
+| `worker.additionalEnv` | Additional environment variables (e.g., to set the timezone via the TZ variable) | `[]` |
 | `worker.args` | Arguments to pass to the container command | `["worker"]` |
 | `worker.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `worker.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |

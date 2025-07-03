@@ -317,21 +317,23 @@ server:
   # -- Arguments to pass to the container command
   args:
     - server
-  serviceMonitor:
-    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
-    enabled: false
-    # -- Additional Labels for the ServiceMonitor object
-    additionalLabels: {}
-    #namespace: "monitoring"
-    namespaceSelector:
-    # Default: scrape .Release.Namespace only
-    # To scrape all, use the following:
-    #  matchNames:
-    #    - monitoring
-    #   any: true
-    # -- (duration) Interval at which metrics should be scraped
-    scrapeInterval: 30s
-    # honorLabels: true
+
+# -- Prometheus-operator ServiceMonitor config
+serviceMonitor:
+  # -- Specifies whether a prometheus-operator ServiceMonitor should be created
+  enabled: false
+  # -- Additional Labels for the ServiceMonitor object
+  additionalLabels: {}
+  #namespace: "monitoring"
+  namespaceSelector:
+  # Default: scrape .Release.Namespace only
+  # To scrape all, use the following:
+  #  matchNames:
+  #    - monitoring
+  #   any: true
+  # -- (duration) Interval at which metrics should be scraped
+  scrapeInterval: 30s
+  # honorLabels: true
 
 # -- FiveNet Worker deployment config
 worker:
@@ -373,21 +375,6 @@ worker:
   # -- Arguments to pass to the container command
   args:
     - worker
-  serviceMonitor:
-    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
-    enabled: false
-    # -- Additional Labels for the ServiceMonitor object
-    additionalLabels: {}
-    #namespace: "monitoring"
-    namespaceSelector:
-    # Default: scrape .Release.Namespace only
-    # To scrape all, use the following:
-    #  matchNames:
-    #    - monitoring
-    #   any: true
-    # -- (duration) Interval at which metrics should be scraped
-    scrapeInterval: 30s
-    # honorLabels: true
 
 # -- FiveNet Discord Bot deployment config
 discord:
@@ -429,21 +416,6 @@ discord:
   # -- Arguments to pass to the container command
   args:
     - discord
-  serviceMonitor:
-    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
-    enabled: false
-    # -- Additional Labels for the ServiceMonitor object
-    additionalLabels: {}
-    #namespace: "monitoring"
-    namespaceSelector:
-    # Default: scrape .Release.Namespace only
-    # To scrape all, use the following:
-    #  matchNames:
-    #    - monitoring
-    #   any: true
-    # -- (duration) Interval at which metrics should be scraped
-    scrapeInterval: 30s
-    # honorLabels: true
 
 # -- Iconify helm chart options, please see https://github.com/fivenet-app/charts/tree/main/charts/iconify for more information
 iconify:

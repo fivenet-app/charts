@@ -43,12 +43,9 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `affinity` |  | `{}` |
-| `discord` | FiveNet Discord Bot deployment config | `{"additionalEnv":[],"args":["discord"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
+| `discord` | FiveNet Discord Bot deployment config | `{"additionalEnv":[],"args":["discord"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
 | `discord.additionalEnv` | Additional environment variables (e.g., to set the timezone via the TZ variable) | `[]` |
 | `discord.args` | Arguments to pass to the container command | `["discord"]` |
-| `discord.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
-| `discord.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
-| `discord.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
 | `extraObjects` | Extra objects to deploy (value evaluated as a template) | `[]` |
 | `fivenet.config` | FiveNet config, make sure to checkout the [config reference documentation](https://fivenet.app/getting-started/configuration/config-reference) | `{"audit":{"retentionDays":90},"auth":{"superuserGroups":["projektleiter","teamleitung"],"superuserUsers":[]},"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","custom":{"columns":{"user":{"playtime":"playtime","visum":"visum"},"vehicle":{"model":"model"}},"conditions":{"user":{"filterEmptyName":false}}},"dsn":"DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin","esxCompat":true,"maxIdleConns":5,"maxOpenConns":32},"discord":{"commands":{"enabled":true},"enabled":false,"groupSync":{"enabled":false,"mapping":{"fraktionsverwaltung":{"notSameJob":true,"roleName":"Fraktionsverwaltung"},"teamleitung":{"roleName":"Teamleitung"}}},"token":"your_discord_bot_token","userInfoSync":{"employeeRoleFormat":"%s Employees","enabled":false,"gradeRoleFormat":"[%grade%] %grade_label%","jobsAbsceneRoleName":"Absent","unemployedRoleName":"Citizen"}},"dispatchCenter":{"convertJobs":[],"type":"gksphone"},"game":{"cleanupRolesForMissingJobs":false,"startJobGrade":0},"http":{"adminListen":":7070","listen":":8080","origins":["https://fivenet.example.com"],"publicURL":"https://fivenet.example.com","sessions":{"cookieSecret":"your_generated_cookie_secret","domain":"fivenet.example.com"},"trustedProxies":[]},"imageProxy":{"cachePrefix":"images/","enabled":true,"options":{"allowHosts":[],"denyHosts":[]},"url":"/api/image_proxy/"},"jwt":{"secret":"your_generated_jwt_secret"},"logLevel":"INFO","logLevelOverrides":{"cron":"INFO","kvstore":"INFO","locks":"INFO","perms":"INFO"},"mode":"release","nats":{"replicas":1,"url":"nats://fivenet:fivenet_topsecret@nats:4222"},"oauth2":{"providers":[]},"otlp":{"attributes":["k8s.namespace.name=${POD_NAMESPACE}"],"compression":"none","enabled":false,"environment":"live","frontend":{"headers":{},"url":""},"headers":{},"insecure":false,"ratio":0.1,"timeout":"10s","type":"stdout","url":"http://localhost:4317"},"postalsFile":".output/public/data/postals.json","secret":"your_generated_db_secret_32_char","storage":{"filesystem":{"path":".data/","prefix":""},"s3":{"accessKeyID":"","bucketName":"","checkOnStartup":false,"endpoint":"","prefix":"","region":"us-east-1","retries":3,"secretAccessKey":"","useSSL":true},"type":"filesystem"},"sync":{"apiTokens":[],"enabled":false}}` |
 | `fullnameOverride` |  | `""` |
@@ -93,10 +90,6 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `server.replicaCount` |  | `1` |
 | `server.resources` |  | `{}` |
 | `server.revisionHistoryLimit` |  | `1` |
-| `server.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
-| `server.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
-| `server.serviceMonitor.namespaceSelector` |  | `nil` |
-| `server.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
 | `server.startupProbe.failureThreshold` |  | `30` |
 | `server.startupProbe.httpGet.path` |  | `"/readiness"` |
 | `server.startupProbe.httpGet.port` |  | `"metrics"` |
@@ -106,13 +99,14 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `serviceAccount.annotations` |  | `{}` |
 | `serviceAccount.create` |  | `true` |
 | `serviceAccount.name` |  | `""` |
+| `serviceMonitor` | Prometheus-operator ServiceMonitor config | `{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"}` |
+| `serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
+| `serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
+| `serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
 | `tolerations` |  | `[]` |
-| `worker` | FiveNet Worker deployment config | `{"additionalEnv":[],"args":["worker"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"serviceMonitor":{"additionalLabels":{},"enabled":false,"namespaceSelector":null,"scrapeInterval":"30s"},"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
+| `worker` | FiveNet Worker deployment config | `{"additionalEnv":[],"args":["worker"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
 | `worker.additionalEnv` | Additional environment variables (e.g., to set the timezone via the TZ variable) | `[]` |
 | `worker.args` | Arguments to pass to the container command | `["worker"]` |
-| `worker.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
-| `worker.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
-| `worker.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
 
 ## Uninstalling the Chart
 

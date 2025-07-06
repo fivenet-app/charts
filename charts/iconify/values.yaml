@@ -31,7 +31,7 @@ podLabels: {}
 podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
-  # fsGroup: 2000
+  fsGroup: 2000
 
 securityContext:
   allowPrivilegeEscalation: false
@@ -39,8 +39,8 @@ securityContext:
     drop:
     - ALL
   runAsNonRoot: true
+  runAsUser: 2000
   # readOnlyRootFilesystem: true
-  # runAsUser: 1000
 
 service:
   type: ClusterIP

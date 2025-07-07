@@ -110,7 +110,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 
 ## Uninstalling the Chart
 
-To see the currently installed Rook chart:
+To see the currently installed FiveNet chart:
 
 ```console
 helm ls

@@ -19,7 +19,7 @@ helm repo add fivenet https://fivenet.app/charts
 helm install fivenet/fivenet -f values.yaml
 
 # Or upgrade
-helm upgrade --install fivenet/fivenet -f values.yaml
+helm upgrade --install fivenet fivenet/fivenet -f values.yaml
 ```
 
 For example settings, see the next section or [values.yaml](/charts/fivenet/values.yaml).

@@ -21,7 +21,10 @@ bin-$(HELM_DOCS): ## Installs helm-docs
 
 .PHONY: helm-docs
 helm-docs: bin-$(HELM_DOCS) ## Use helm-docs to generate documentation from helm charts
-	$(HELM_DOCS) -c charts/fivenet \
-		-o README.md \
-		-t README.gotmpl.md \
-		-t _templates.gotmpl
+	for dir in $(shell find charts -mindepth 1 -maxdepth 1 -type d); do \
+		echo "Generating docs for $$dir"; \
+		$(HELM_DOCS) -c $$dir \
+			-o README.md \
+			-t README.gotmpl.md \
+			-t _templates.gotmpl; \
+	done

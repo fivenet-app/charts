@@ -42,6 +42,9 @@ The following table lists the configurable parameters of the FiveNet chart and t
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
+| `additionalEnv` | Additional environment variables to set in the server, worker and discord pods | `[]` |
+| `additionalVolumeMounts` | Additional volume mounts to mount into the server, worker and discord pods | `[]` |
+| `additionalVolumes` | Additional volumes to mount into the server, worker and discord pods | `[]` |
 | `affinity` |  | `{}` |
 | `discord` | FiveNet Discord Bot deployment config | `{"additionalEnv":[],"args":["discord"],"enabled":true,"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/fivenet-app/fivenet","tag":""},"livenessProbe":{"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10},"readinessProbe":null,"replicaCount":1,"resources":{},"revisionHistoryLimit":1,"startupProbe":{"failureThreshold":20,"httpGet":{"path":"/readiness","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10}}` |
 | `discord.additionalEnv` | Additional environment variables (e.g., to set the timezone via the TZ variable) | `[]` |

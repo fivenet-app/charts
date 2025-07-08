@@ -34,6 +34,9 @@ spec:
         - name: fivenet-config
           secret:
             secretName: "{{ include "fivenet.fullname" . }}-fivenet-config"
+        {{- with .Values.additionalVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       containers:
         - name: fivenet
           args:
@@ -47,6 +50,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          {{- with .Values.additionalEnv }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.server.additionalEnv }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -73,6 +79,11 @@ spec:
             - name: fivenet-config
               mountPath: /config
               readOnly: true
+            {{- with .Values.additionalVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

@@ -275,6 +275,22 @@ fivenet:
           # Example to authenticate with an API key
           #authorization: "OTEL_API_KEY_HERE"
 
+# -- Additional environment variables to set in the server, worker and discord pods
+additionalEnv: []
+  # - name: TZ
+  #   value: "Europe/Berlin"
+
+# -- Additional volumes to mount into the server, worker and discord pods
+additionalVolumes: []
+  # - name: fivenet-data
+  #   persistentVolumeClaim:
+  #     claimName: fivenet-data-pvc
+
+# -- Additional volume mounts to mount into the server, worker and discord pods
+additionalVolumeMounts: []
+  # - name: fivenet-data
+  #   mountPath: /data
+
 server:
   enabled: true
   replicaCount: 1

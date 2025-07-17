@@ -72,6 +72,8 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `ingressGRPC.hosts[0].paths[0].path` |  | `"/services.+"` |
 | `ingressGRPC.hosts[0].paths[0].pathType` |  | `"ImplementationSpecific"` |
 | `ingressGRPC.tls` |  | `[]` |
+| `migration` | Migration job config | `{"enabled":true}` |
+| `migration.enabled` | Specifies whether the migration job should be created | `true` |
 | `nameOverride` |  | `""` |
 | `nats` | NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values | `{"config":{"cluster":{"enabled":true,"replicas":3},"jetstream":{"enabled":true,"fileStore":{"enabled":true,"pvc":{"enabled":true,"size":"5Gi"}},"memoryStore":{"enabled":true,"maxSize":"64Mi"}},"merge":{"accounts":{"fivenet":{"jetstream":"enabled","users":[{"password":"fivenet","user":"fivenet"}]}},"max_payload":3145728}},"enabled":true,"promExporter":{"enabled":true,"image":{"repository":"docker.io/natsio/prometheus-nats-exporter","tag":"0.17.3"},"patch":[{"op":"replace","path":"/args","value":["-port=7777","-channelz","-connz","-routez","-subz","-varz","-prefix=nats","-serverz","-use_internal_server_id","-jsz=streams","-ri=15","http://localhost:8222/"]}],"podMonitor":{"enabled":false,"patch":[{"op":"add","path":"/spec/podMetricsEndpoints/0/interval","value":"30s"}]}}}` |
 | `nodeSelector` |  | `{}` |

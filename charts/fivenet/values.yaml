@@ -294,6 +294,11 @@ additionalVolumeMounts: []
   # - name: fivenet-data
   #   mountPath: /data
 
+# -- Migration job config
+migration:
+  # -- Specifies whether the migration job should be created
+  enabled: true
+
 server:
   enabled: true
   replicaCount: 1

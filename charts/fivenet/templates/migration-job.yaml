@@ -1,33 +1,26 @@
-{{- if .Values.server.enabled -}}
-apiVersion: apps/v1
-kind: Deployment
+{{- if .Values.migration.enabled -}}
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: {{ include "fivenet.fullname" . }}
+  name: {{ include "fivenet.fullname" . }}-migration
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-  replicas: {{ .Values.server.replicaCount }}
-  revisionHistoryLimit: {{ .Values.server.revisionHistoryLimit }}
-  selector:
-    matchLabels:
-      app.kubernetes.io/component: server
-      {{- include "fivenet.selectorLabels" . | nindent 6 }}
+  backoffLimit: 1
   template:
     metadata:
-      annotations:
-        checksum/fivenet-config: {{ include (print $.Template.BasePath "/secrets.yaml") $ | sha256sum }}
-      {{- with .Values.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
-        app.kubernetes.io/component: server
-        {{- include "fivenet.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: migration
+        {{- include "fivenet.selectorLabels" . | nindent 6 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "fivenet.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
@@ -37,10 +30,13 @@ spec:
         {{- with .Values.additionalVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      restartPolicy: OnFailure
       containers:
-        - name: fivenet
+        - name: migration
           args:
-            {{- toYaml .Values.server.args | nindent 12 }}
+            - tools
+            - db
+            - up
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
@@ -50,33 +46,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          {{- if .Values.migration.enabled }}
-            - name: FIVENET_SKIP_DB_MIGRATIONS
-              value: "true"
-          {- end }
           {{- with .Values.additionalEnv }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.server.additionalEnv }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
-            - name: metrics
-              containerPort: 7070
-              protocol: TCP
-          {{- with .Values.server.livenessProbe }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.server.readinessProbe }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.server.startupProbe }}
-          startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:

@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: migration
-        {{- include "fivenet.selectorLabels" . | nindent 6 }}
+        {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

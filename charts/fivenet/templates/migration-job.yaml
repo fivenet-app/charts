@@ -80,7 +80,8 @@ metadata:
   name: "{{ include "fivenet.fullname" . }}-config-migration"
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/resource-policy: keep
     helm.sh/hook-weight: "-10"
 data:
   config.yaml: {{ tpl (.Values.fivenet.config | toYaml) . | b64enc }}

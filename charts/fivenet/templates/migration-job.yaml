@@ -73,4 +73,15 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "{{ include "fivenet.fullname" . }}-config-migration"
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "-10"
+data:
+  config.yaml: {{ tpl (.Values.fivenet.config | toYaml) . | b64enc }}
 {{- end }}

@@ -33,7 +33,7 @@ spec:
       volumes:
         - name: fivenet-config
           secret:
-            secretName: "{{ include "fivenet.fullname" . }}-fivenet-config"
+            secretName: "{{ include "fivenet.fullname" . }}-config"
         {{- with .Values.additionalVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

@@ -41,8 +41,8 @@ spec:
             - name: HOME
               value: /home/iconify
             {{- if .Values.additionalEnv }}
-            {{- toYaml . | nindent 12 }}
-            {{- end   }}
+            {{- toYaml .Values.additionalEnv | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

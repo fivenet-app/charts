@@ -37,7 +37,11 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- toYaml .Values.additionalEnv | nindent 12 }}
+            - name: HOME
+              value: /home/iconify
+            {{- if .Values.additionalEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end   }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -49,12 +53,16 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: home
+              mountPath: /home/iconify
             - name: cache
               mountPath: /data/iconify-api/cache
           {{- if .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
+        - name: home
+          emptyDir: {}
         - name: cache
           emptyDir: {}
       {{- if .Values.volumes }}

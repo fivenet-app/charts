@@ -63,6 +63,7 @@ The following table lists the configurable parameters of the Iconify chart and t
 | `resources` |  | `{}` |
 | `securityContext.allowPrivilegeEscalation` |  | `false` |
 | `securityContext.capabilities.drop[0]` |  | `"ALL"` |
+| `securityContext.runAsGroup` |  | `2000` |
 | `securityContext.runAsNonRoot` |  | `true` |
 | `securityContext.runAsUser` |  | `2000` |
 | `service.port` |  | `3000` |

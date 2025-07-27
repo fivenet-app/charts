@@ -1490,6 +1490,16 @@ entries:
   iconify:
   - apiVersion: v2
     appVersion: 3.1.0
+    created: "2025-07-27T20:20:28.736464731Z"
+    description: A plain simple Helm chart for Iconify.
+    digest: 9d85681918f654f4196dee5885b2675831c0c4b1ccdde390ec65d34b29dcb707
+    name: iconify
+    type: application
+    urls:
+    - https://github.com/fivenet-app/charts/releases/download/iconify-0.5.0/iconify-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
+    appVersion: 3.1.0
     created: "2025-07-27T20:02:50.54606976Z"
     description: A plain simple Helm chart for Iconify.
     digest: 13a04060f1b6c0672acd2ce28b3e1313697980acf83387ba7aed676136640cc6
@@ -1578,4 +1588,4 @@ entries:
     urls:
     - https://github.com/fivenet-app/charts/releases/download/iconify-0.1.0/iconify-0.1.0.tgz
     version: 0.1.0
-generated: "2025-07-27T20:04:54.694789374Z"
+generated: "2025-07-27T20:20:28.736724948Z"

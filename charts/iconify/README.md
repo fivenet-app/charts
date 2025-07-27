@@ -39,6 +39,9 @@ The following table lists the configurable parameters of the Iconify chart and t
 | `autoscaling.maxReplicas` |  | `100` |
 | `autoscaling.minReplicas` |  | `1` |
 | `autoscaling.targetCPUUtilizationPercentage` |  | `80` |
+| `external.enabled` | If enabled, the service will be of type ExternalName and no deployment or other service will be created (only ingress if enabled). | `false` |
+| `external.externalName` | The name of the external service to use. | `"iconify.default.svc.cluster.local"` |
+| `external.targetPort` | The target port of the external service. | `3000` |
 | `fullnameOverride` |  | `""` |
 | `image.pullPolicy` |  | `"IfNotPresent"` |
 | `image.repository` |  | `"docker.io/iconify/api"` |
@@ -69,7 +72,7 @@ The following table lists the configurable parameters of the Iconify chart and t
 | `service.port` |  | `3000` |
 | `service.type` |  | `"ClusterIP"` |
 | `serviceAccount.annotations` |  | `{}` |
-| `serviceAccount.automount` |  | `true` |
+| `serviceAccount.automount` |  | `false` |
 | `serviceAccount.create` |  | `true` |
 | `serviceAccount.name` |  | `""` |
 | `tolerations` |  | `[]` |

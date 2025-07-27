@@ -1,3 +1,4 @@
+{{- if not .Values.external.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,17 @@ spec:
       name: http
   selector:
     {{- include "iconify.selectorLabels" . | nindent 4 }}
+{{- else }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "iconify.fullname" . }}
+spec:
+  type: ExternalName
+  externalName: "{{ .Values.external.externalName }}"
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.external.targetPort }}
+      protocol: TCP
+      name: http
+{{- end }}

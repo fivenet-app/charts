@@ -278,6 +278,22 @@ fivenet:
           # Example to authenticate with an API key
           #authorization: "OTEL_API_KEY_HERE"
 
+    updateCheck:
+      # If enabled, it will check for updates every interval.
+      enabled: true
+      # Interval for checking updates, e.g., "1h", "30m", "15s"
+      interval: "6h"
+
+    icons:
+      # If true, the Iconify API is enabled and will be served from the backend to serve icons.
+      enabled: true
+      # If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
+      proxy: false
+      # If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
+      apiUrl: "https://api.iconify.design"
+      # Path to the directory containing icon sets (used when proxy is disabled; this path works with the official FiveNet container images).
+      path: ./icons
+
 # -- Additional environment variables to set in the server, worker and discord pods
 additionalEnv: []
   # - name: TZ
@@ -441,11 +457,14 @@ discord:
   args:
     - discord
 
-# -- Iconify helm chart options, please see https://github.com/fivenet-app/charts/tree/main/charts/iconify for more information
+# -- Iconify helm chart options, see https://github.com/fivenet-app/charts/tree/main/charts/iconify for more information.
 iconify:
-  enabled: true
+  # -- Disabled by default as the FiveNet container image now has a local icon set copy and can proxy Iconify requests since `v2025.8.1` and higher.
+  enabled: false
+  external:
+    enabled: false
   ingress:
-    enabled: true
+    enabled: false
     className: "nginx"
     annotations:
       # If you use a different ingress controller you must adjust this annotation

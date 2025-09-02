@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.server.replicaCount }}
+  replicas: {{ .Values.server.replicaCount | int }}
   revisionHistoryLimit: {{ .Values.server.revisionHistoryLimit }}
   selector:
     matchLabels:

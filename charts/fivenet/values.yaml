@@ -492,24 +492,6 @@ nats:
     enabled: true
     image:
       repository: docker.io/natsio/prometheus-nats-exporter
-      tag: 0.17.3
-
-    patch:
-      - op: replace
-        path: /args
-        value:
-          - -port=7777
-          - -channelz
-          - -connz
-          - -routez
-          - -subz
-          - -varz
-          - -prefix=nats
-          - -serverz
-          - -use_internal_server_id
-          - -jsz=streams
-          - -ri=15
-          - http://localhost:8222/
 
     podMonitor:
       enabled: false # enable only if your have the prometheus-operator deployed

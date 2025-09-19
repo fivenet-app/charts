@@ -4,6 +4,9 @@
         "config:recommended",
         "group:allNonMajor"
     ],
+    "schedule": [
+        "at any time"
+    ],
     "baseBranchPatterns": [
         "develop"
     ]

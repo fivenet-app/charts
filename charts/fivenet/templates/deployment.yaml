@@ -38,7 +38,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       containers:
-        - name: fivenet
+        - name: server
           args:
             {{- toYaml .Values.server.args | nindent 12 }}
           securityContext:

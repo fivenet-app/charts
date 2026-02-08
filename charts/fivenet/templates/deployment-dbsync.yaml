@@ -1,0 +1,100 @@
+{{- if .Values.dbsync.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fivenet.fullname" . }}-dbsync
+  labels:
+    {{- include "fivenet.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dbsync.replicaCount | int }}
+  revisionHistoryLimit: {{ .Values.dbsync.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: dbsync
+      {{- include "fivenet.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/fivenet-dbsync-config: {{ include (print $.Template.BasePath "/secrets.yaml") $ | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: dbsync
+        {{- include "fivenet.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "fivenet.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: fivenet-dbsync-config
+          secret:
+            secretName: "{{ include "fivenet.fullname" . }}-dbsync-config"
+        {{- with .Values.additionalVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: dbsync
+          args:
+            {{- toYaml .Values.dbsync.args | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.dbsync.image.repository }}:{{ .Values.dbsync.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.dbsync.image.pullPolicy }}
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          {{- if .Values.migration.enabled }}
+            - name: FIVENET_SKIP_DB_MIGRATIONS
+              value: "true"
+          {{- end }}
+          {{- with .Values.additionalEnv }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.server.additionalEnv }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: metrics
+              containerPort: 7070
+              protocol: TCP
+          {{- with .Values.dbsync.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.dbsync.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.dbsync.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: fivenet-dbsync-config
+              mountPath: /config
+              readOnly: true
+            {{- with .Values.additionalVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.dbsync.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

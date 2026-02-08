@@ -457,6 +457,331 @@ discord:
   args:
     - discord
 
+# -- FiveNet DBSync deployment config
+dbsync:
+  enabled: false
+  replicaCount: 1
+  revisionHistoryLimit: 1
+  image:
+    repository: ghcr.io/fivenet-app/fivenet
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  # Currently the DBSync doesn't have any health endpoints, so they should be left as null
+  livenessProbe: null
+  readinessProbe: null
+  startupProbe: null
+  # -- Additional environment variables (e.g., to set the timezone via the TZ variable)
+  additionalEnv: []
+  # -- Arguments to pass to the container command
+  args:
+    - dbsync
+    - run
+  # -- DBSync config - This only shows some of the most important options, for all options please refer to the [DBSync configuration reference](https://fivenet.app/getting-started/configuration/dbsync-config-reference)
+  config:
+    # Helm chart changes will cause the DBSync deployment to be restarted, no need to watch the config.
+    watchConfig: false
+    # Path to the state file (will be created automatically if it doesn't exist) - Should be on a volume (PVC).
+    stateFile: "/data/dbsync.state.yaml"
+    # The target FiveNet instance to sync data to (the instance must have the sync API enabled and you need a valid token)
+    destination:
+      # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
+      # requires the FiveNet instance to **use HTTPS**.
+      # ! Make sure to not include the protocol (http:// or https://) here!
+      # ! Don't include a trailing slash!
+      #
+      # Example:
+      # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
+      # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
+      url: "fivenet.example.com"
+      token: "YOUR_SYNC_API_TOKEN"
+      # Disable TLS verification (not recommended)
+      insecure: false
+      # Sync Interval can also be specified per table in the `tables:` section
+      syncInterval: 5s
+    # Your gameservers' database details
+    # Changes to the source require a restart of the dbsync.
+    source:
+      # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+      # Please note that the `parseTime` parameter is always set to true
+      dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
+      # Example for a locally hosted database
+      #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
+      #
+      # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+      # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
+      # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
+      #host: "localhost"
+      #port: 3306
+      #username: "fivenet"
+      #password: "changeme"
+      #database: "fivenet"
+
+      # Advanced connection settings
+      maxOpenConns: 12
+      maxIdleConns: 5
+      connMaxIdleTime: 10m
+      connMaxLifetime: 45m
+      disableLocking: false
+
+      # Interval in which base data (jobs, job grades, licenses) is re-synced fully
+      baseDataResyncInterval: 5m
+    tables:
+      # The example queries here are for the ESX framework
+      jobs:
+        enabled: true
+        # Name of the table for this data (in case you are using a custom query or are joining
+        # multiple tables this should be the primary one)
+        tableName: "jobs"
+        # Jobs table column names (only used when no custom `query` is specified)
+        columns:
+          name: "name"
+          label: "label"
+        # Custom query to retrieve the jobs (you must return the required columns)
+        #
+        # Must return result columns named: `job.name`, `job.label`
+        #query: |
+        #  SELECT
+        #    `name` AS `job.name`,
+        #    `label` AS `job.label`
+        #  FROM
+        #    `jobs`
+        #  ORDER BY `name`
+        #  OFFSET $offset;
+        filters: []
+          # Example filter to drop jobs starting with "off_", to enable uncomment this section
+          # This is useful in combination with the `users:` jobs filters below if you
+          # have "off-duty" jobs that need to be rewritten to their "actual" job name
+          #- pattern: '^off_'
+          #  action: drop
+      jobGrades:
+        enabled: true
+        # Name of the table for this data (in case you are using a custom query or are joining
+        # multiple tables this should be the primary one)
+        tableName: "job_grades"
+        # Job grades table column names (only used when no custom `query` is specified)
+        columns:
+          jobName: "job_name"
+          grade: "grade"
+          name: "name"
+          label: "label"
+        # Custom query to retrieve the job grades data (you must return the required columns)
+        #
+        # Must return result columns named: `job_grade.job_name`, `job_grade.grade`, `job_grade.name`, `job_grade.label`
+        # (With a `WHERE`-condition for the `job_name` column using the `$jobName` parameter)
+        #query: |
+        #  SELECT
+        #    `job_name` AS `job_grade.job_name`,
+        #    `grade` AS `job_grade.grade`,
+        #    `name` AS `job_grade.name`,
+        #    `label` AS `job_grade.label`
+        #  FROM
+        #    `job_grades`
+        #  WHERE
+        #    `job_grades`.`job_name` = $jobName
+        #  ORDER BY `job_grade.job_name`, `job_grade.grade`
+        #  OFFSET $offset;
+      licenses:
+        enabled: true
+        # Name of the table for this data (in case you are using a custom query or are joining
+        # multiple tables this should be the primary one)
+        tableName: "licenses"
+        # Licenses table column names (only used when no custom `query` is specified)
+        columns:
+          type: "type"
+          label: "label"
+        # Custom query to retrieve the available licenses (not per user, see `userLicenses:` below)
+        #
+        # Must return result columns named: `license.type`, `license.label`
+        #query: |
+        #  SELECT
+        #    `licenses`.`type` AS `license.type`,
+        #    `licenses`.`label` AS `license.label`
+        #  FROM
+        #    `licenses`
+        #  ORDER BY `type`
+        #  LIMIT $limit
+        #  OFFSET $offset;
+      users:
+        enabled: true
+        # Name of the table for this data (in case you are using a custom query or are joining
+        # multiple tables this should be the primary one)
+        tableName: "users"
+        # If your "players"/"users" data has a timestamp/datetime column that is updated on update,
+        # configure it here so that after the initial sync only the changed data is synced again.
+        updatedTimeColumn: "last_seen"
+        # Users table column names (used to build the default query if no custom `query` is specified)
+        # **NOTE**: The `id` and `identifier` columns are required to be set, even when a custom query is used.
+        # They are used to build the where condition for incremental syncs.
+        columns:
+          id: "id"
+          identifier: "identifier"
+          group: "group"
+          firstname: "firstname"
+          lastname: "lastname"
+          dateOfBirth: "dateofbirth"
+          job: "job"
+          jobGrade: "job_grade"
+          sex: "sex"
+          phoneNumber: "phone_number"
+          height: "height"
+          # Optional columns
+          visum: "-" # Indicates that this column is not available
+          playtime: "-" # Indicates that this column is not available
+        # Custom query to retrieve users data.
+        # The identifier column should be a smart combination of values when using a multichar system.
+        # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
+        #
+        # Must return result columns named: `user.user_id`, `user.identifier`, `user.group`, `user.firstname`,
+        # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
+        # Optional columns: `user.height`, `user.visum`, `user.playtime`
+        #query: |
+        #  SELECT
+        #    `id` AS `user.id`,
+        #    `identifier` AS `user.identifier`,
+        #    `group` AS `user.group`,
+        #    `firstname` AS `user.firstname`,
+        #    `lastname` AS `user.lastname`,
+        #    `dateofbirth` AS `user.dateofbirth`,
+        #    `job` AS `user.job`,
+        #    `job_grade` AS `user.job_grade`,
+        #    `sex` AS `user.sex`,
+        #    `phone_number` AS `user.phone_number`,
+        #    `height` AS `user.height`,
+        #    `visum` AS `user.visum`,
+        #    `playtime` AS `user.playtime`
+        #  FROM
+        #    `users`
+        #  $whereCondition
+        #  ORDER BY `id`
+        #  LIMIT $limit
+        #  OFFSET $offset;
+        # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
+        splitName: true
+        # Normalize date of birth value to the output format if possible
+        # Please see the Go `time` pkg documentation on potential date format layouts: https://pkg.go.dev/time#Layout
+        dateOfBirth:
+          formats:
+            - "2006-01-02" # 2000-10-18 = YYYY-MM-DD
+            - "02/01/2006" # 09/06/1993 = MM/DD/YYYY
+            - "02.01.2006" # 01.08.1982 = DD.MM.YYYY
+          outputFormat: "02.01.2006" # DD.MM.YYYY
+        valueMapping:
+          # This allows to map values to different values for FiveNet
+          # E.g., the sex of a char must be either `m`, `f`, or `d`
+          sex:
+            fallback: 'm'
+            values:
+              '1': 'f'
+        # If the firstname or lastname is empty or null, do not sync the user at all
+        ignoreEmptyNames: true
+        # Filters allow to modify certain values before they are sent to FiveNet
+        filters:
+          jobs: []
+            # Example: `off_police` -> `police`
+            #- pattern: '^off_'
+            #  action: replace
+            #  replacement: ''
+            # Example: `ambulance` -> `ems`
+            #- pattern: '^ambulance$'
+            #  action: replace
+            #  replacement: 'ems'
+      userLicenses:
+        enabled: true
+        # Name of the table for this data (in case you are using a custom query or are joining
+        # multiple tables this should be the primary one)
+        tableName: "user_licenses"
+        # User licenses table column names (only used when no custom `query` is specified)
+        columns:
+          type: "type"
+          ownerIdentifier: "owner"
+        # Custom query to retrieve the licenses for a **specific** user, the `$identifier` parameter is the placeholder for the user's identifier
+        #
+        # Must return result columns named: `user_license.type`, `user_license.owner`
+        #query: |
+        #  SELECT
+        #    `type` AS `user_license.type`,
+        #    `owner` AS `user_license.owner`
+        #  FROM
+        #    `user_licenses`
+        #  WHERE
+        #    `user_licenses`.`owner` = $identifier
+        #  ORDER BY `type`
+        #  LIMIT $limit
+        #  OFFSET $offset;
+      vehicles:
+        enabled: true
+        # Name of the table for this data (in case you are using a custom query or are joining
+        # multiple tables this should be the primary one)
+        tableName: "owned_vehicles"
+        # By default the dbsync will attempt to add the column if it does not exist, but you can
+        # disable that by commenting this out. It is recommended to leave it enabled, for
+        # performance reasons.
+        updatedTimeColumn: "updated_at"
+        # Vehicles table column names (only used when no custom `query` is specified)
+        columns:
+          ownerIdentifier: "owner"
+          # Use this if vehicles are linked by user DB ID instead of identifier
+          #ownerId: "owner"
+          plate: "plate"
+          type: "type"
+          model: "-" # Indicates that this column is not available
+        # Custom query to retrieve all vehicles
+        #
+        # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
+        # `vehicle.plate`, `vehicle.type`
+        # Optional columns: `vehicle.model`, `vehicle.job` (for job specific vehicles)
+        #query: |
+        #  SELECT
+        #    `owner` AS `vehicle.owner_identifier`,
+        #    `plate` AS `vehicle.plate`,
+        #    `type` AS `vehicle.type`,
+        #    `model` AS `vehicle.model`
+        #  FROM
+        #    `owned_vehicles`
+        #  ORDER BY `vehicle.plate`
+        #  LIMIT $limit
+        #  OFFSET $offset;
+      # Accounts - Used to, e.g., sync group(s) by license, to accounts.
+      accounts:
+        enabled: false
+        tableName: "admin_accounts"
+        # By default the dbsync will attempt to add the column if it does not exist, but you can
+        # disable that by commenting this out. It is recommended to leave it enabled, for
+        # performance reasons.
+        updatedTimeColumn: "updated_at"
+        # Query to retrieve account data (example query to show how to retrieve
+        # account primary group and sub groups (using `JSON_*` funcs)).
+        #
+        # Must return result columns named: `account.license`, `account.group` (primary group)
+        # Optional columns: `account.groups` (comma-separated list of groups, if `account.group` is empty first group is used)
+        query: "" # Query to retrieve all accounts
+        #  SELECT
+        #    `license` AS `account.license`,
+        #    `group` AS `account.group`,
+        #    JSON_KEYS(NULLIF(`sub_groups`, '')) AS `account.groups`
+        #  FROM
+        #    `admin_accounts`
+        #  $whereCondition
+        #  ORDER BY `license`
+        #  LIMIT $limit
+        #  OFFSET $offset;
+
+    tableManager:
+      # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.
+      enabled: true
+
 # -- NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values
 nats:
   enabled: true # if disabled you must run your own Nats server or cluster

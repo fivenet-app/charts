@@ -1,0 +1,35 @@
+{{- if and .Values.dbsync.enabled (and .Values.dbsync.persistence.enabled (not .Values.dbsync.persistence.existingClaim)) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "fivenet.fullname" . }}-dbsync-state
+  labels:
+    app.kubernetes.io/component: dbsync
+    {{- include "fivenet.labels" . | nindent 4 }}
+    {{- with .Values.dbsync.persistence.extraPvcLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.dbsync.persistence.annotations  }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    {{- range .Values.dbsync.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.dbsync.persistence.size | quote }}
+  {{- if .Values.dbsync.persistence.volumeName }}
+  volumeName: {{ .Values.dbsync.persistence.volumeName }}
+  {{- end }}
+  {{- with .Values.dbsync.persistence.storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+  {{- with .Values.dbsync.persistence.selectorLabels }}
+  selector:
+    matchLabels:
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+{{- end }}

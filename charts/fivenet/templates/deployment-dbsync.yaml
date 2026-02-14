@@ -8,6 +8,10 @@ metadata:
 spec:
   replicas: {{ .Values.dbsync.replicaCount | int }}
   revisionHistoryLimit: {{ .Values.dbsync.revisionHistoryLimit }}
+  {{- with .Values.dbsync.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/component: dbsync
@@ -34,6 +38,18 @@ spec:
         - name: fivenet-dbsync-config
           secret:
             secretName: "{{ include "fivenet.fullname" . }}-dbsync-config"
+        - name: fivenet-dbsync-state
+          {{- if .Values.dbsync.persistence.enabled }}
+          {{- if .Values.dbsync.persistence.existingClaim }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.dbsync.persistence.existingClaim }}
+          {{- else }}
+          persistentVolumeClaim:
+            claimName: {{ include "fivenet.fullname" . }}-dbsync-state
+          {{- end }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
         {{- with .Values.additionalVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -60,10 +76,7 @@ spec:
           {{- with .Values.server.additionalEnv }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          ports:
-            - name: metrics
-              containerPort: 7070
-              protocol: TCP
+          ports: []
           {{- with .Values.dbsync.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -80,6 +93,9 @@ spec:
             - name: fivenet-dbsync-config
               mountPath: /config
               readOnly: true
+            - name: fivenet-dbsync-state
+              mountPath: /state
+              readOnly: false
             {{- with .Values.additionalVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

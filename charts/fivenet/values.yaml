@@ -516,6 +516,9 @@ dbsync:
 
   # -- DBSync config - This only shows some of the most important options, for all options please refer to the [DBSync configuration reference](https://fivenet.app/getting-started/configuration/dbsync-config-reference)
   config:
+    # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+    logLevel: "INFO"
+
     # Helm chart changes will cause the DBSync deployment to be restarted, no need to watch the config.
     watchConfig: false
     # Path to the state file (will be created automatically if it doesn't exist) - Should be on a volume (PVC).

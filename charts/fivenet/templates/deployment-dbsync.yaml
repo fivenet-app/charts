@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/fivenet-dbsync-config: {{ include (print $.Template.BasePath "/secrets.yaml") $ | sha256sum }}
+        checksum/fivenet-dbsync-config: {{ include (print $.Template.BasePath "/secrets-dbsync.yaml") $ | sha256sum }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

@@ -512,7 +512,6 @@ dbsync:
     # existingClaim:
     ## Extra labels to apply to a PVC.
     extraPvcLabels: {}
-    accessMode: ReadWriteOnce
 
   # -- DBSync config - This only shows some of the most important options, for all options please refer to the [DBSync configuration reference](https://fivenet.app/getting-started/configuration/dbsync-config-reference)
   config:
@@ -903,7 +902,8 @@ dbsync:
 
 # -- NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values
 nats:
-  enabled: true # if disabled you must run your own Nats server or cluster
+  # -- If disabled you must run your own Nats server or cluster.
+  enabled: true
   config:
     cluster:
       enabled: true

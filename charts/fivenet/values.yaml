@@ -221,13 +221,10 @@ fivenet:
 
     discord:
       enabled: false
+      dryRun: false
       token: "your_discord_bot_token"
-      userInfoSync:
-        enabled: false
-        gradeRoleFormat: "[%grade%] %grade_label%"
-        employeeRoleFormat: "%s Employees"
-        unemployedRoleName: "Citizen"
-        jobsAbsceneRoleName: "Absent"
+      sync: true
+
       groupSync:
         enabled: false
         mapping:
@@ -240,8 +237,22 @@ fivenet:
             roleName: "Teamleitung"
             #permissions: 0
             #color: "#9B59B6"
+      userInfoSync:
+        enabled: false
+        gradeRoleFormat: "[%grade%] %grade_label%"
+        employeeRoleFormat: "%s Employees"
+        unemployedRoleName: "Citizen"
+        jobsAbsceneRoleName: "Absent"
+      qualifications:
+        enabled: true
       commands:
         enabled: true
+
+        # Toggle the availability of individual commands.
+        absent: true
+        fivenet: true
+        help: true
+        sync: true
 
     game:
       # First grade "number/id", some servers start at 0, but I have seen some start at 1

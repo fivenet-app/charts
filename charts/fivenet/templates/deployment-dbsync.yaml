@@ -76,7 +76,10 @@ spec:
           {{- with .Values.server.additionalEnv }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          ports: []
+          ports:
+            - name: metrics
+              containerPort: 7070
+              protocol: TCP
           {{- with .Values.dbsync.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

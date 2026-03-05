@@ -492,10 +492,20 @@ dbsync:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-  # Currently the DBSync doesn't have any health endpoints, so they should be left as null
-  livenessProbe: null
+  livenessProbe:
+    httpGet:
+      path: /readiness
+      port: metrics
+    initialDelaySeconds: 15
+    periodSeconds: 10
   readinessProbe: null
-  startupProbe: null
+  startupProbe:
+    httpGet:
+      path: /readiness
+      port: metrics
+    initialDelaySeconds: 5
+    failureThreshold: 20
+    periodSeconds: 10
   # -- Additional environment variables (e.g., to set the timezone via the TZ variable)
   additionalEnv: []
   # -- Arguments to pass to the container command
@@ -533,6 +543,9 @@ dbsync:
     watchConfig: false
     # Path to the state file (will be created automatically if it doesn't exist) - Should be on a volume (PVC).
     stateFile: "/state/dbsync.state.yaml"
+
+    # Admin Server for metrics and health checks (if empty the admin server is disabled)
+    adminListen: ":7070"
 
     # Your **gameservers' database** details
     # Changes to the source require a restart of the dbsync!

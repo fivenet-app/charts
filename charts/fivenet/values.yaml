@@ -531,8 +531,28 @@ dbsync:
 
   # -- DBSync config - This only shows some of the most important options, for all options please refer to the [DBSync configuration reference](https://fivenet.app/getting-started/configuration/dbsync-config-reference)
   config:
-    # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+        # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
     logLevel: "INFO"
+    log:
+      # If enabled logs are sent to stderr instead of stdout.
+      logToStderr: true
+      # Enable logging to file.
+      logToFile: false
+      # Contains the configuration for file logging (if LogToFile is true, make sure to configure this).
+      file:
+        # Path to the log file.
+        path: "dbsync.log"
+        rotation:
+          # MaxSize is the maximum size in megabytes of the log file before it gets rotated.
+          maxSize: 100 # MB
+          # MaxBackups is the maximum number of old log files to retain.
+          maxBackups: 7
+          # MaxAge is the maximum number of days to retain old log files based on the timestamp.
+          maxAge: 14
+          # Compress determines if the rotated log files should be compressed using gzip.
+          compress: true
+          # Rotation interval for log rotation (e.g., daily rotation).
+          rotationInterval: 24h
 
     # Helm chart changes will cause the DBSync deployment to be restarted, no need to watch the config.
     watchConfig: false
@@ -570,7 +590,8 @@ dbsync:
       # Interval in which base data (jobs, job grades, licenses) is re-synced fully
       baseDataResyncInterval: 5m
 
-    # The target FiveNet instance to sync data to (the instance must have the sync API enabled and you need a valid token)
+    # The target FiveNet instance to sync data to (the instance must have the sync API enabled
+    # and you need a valid token)
     destination:
       # Sync method to use, currently only `api` is supported, which uses the FiveNet Sync API to sync data to FiveNet.
       method: "api"
@@ -595,7 +616,7 @@ dbsync:
         transportSecurity: true
 
       # Sync Interval can also be specified per table in the `tables:` section
-      syncInterval: 5s
+      syncInterval: 3s
       # If you want to test your configuration without actually syncing data to FiveNet
       # you can enable the `dryRun` mode,
       # which will log the data that would be synced instead of sending it to FiveNet.
@@ -625,7 +646,7 @@ dbsync:
         #  FROM
         #    `jobs`
         #  ORDER BY `name`
-        #  OFFSET $offset;
+        #  LIMIT $limit;
         filters: []
           # Example filter to drop jobs starting with "off_", to enable uncomment this section
           # This is useful in combination with the `users:` jobs filters below if you
@@ -661,7 +682,7 @@ dbsync:
         #  WHERE
         #    `job_grades`.`job_name` = $jobName
         #  ORDER BY `job_grade.job_name`, `job_grade.grade`
-        #  OFFSET $offset;
+        #  LIMIT $limit;
 
       # Licenses available on your server, e.g., driver's license, weapon license, etc.
       licenses:
@@ -683,8 +704,7 @@ dbsync:
         #  FROM
         #    `licenses`
         #  ORDER BY `type`
-        #  LIMIT $limit
-        #  OFFSET $offset;
+        #  LIMIT $limit;
 
       # Users/Characters of the game server - This is the main users table,
       # which is used to link to other data to (e.g., vehicles, users' licenses)
@@ -719,7 +739,7 @@ dbsync:
         # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
         #
         # Must return result columns named: `user.user_id`, `user.identifier`, `user.group`, `user.firstname`,
-        # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex` columns
+        # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex` and `user.updated_at` columns
         # Optional columns: `user.phone_number`, `user.height`, `user.visum`, `user.playtime`
         #
         # For advanced users: If an user can has more than one job (e.g., a main job and a secondary job),
@@ -742,13 +762,13 @@ dbsync:
         #    `job_grade` AS `user.job_grade`,
         #    `phone_number` AS `user.phone_number`,
         #    `visum` AS `user.visum`,
-        #    `playtime` AS `user.playtime`
+        #    `playtime` AS `user.playtime`,
+        #    `last_seen` AS `user.updated_at`
         #  FROM
         #    `users`
         #  $whereCondition
-        #  ORDER BY `id`
-        #  LIMIT $limit
-        #  OFFSET $offset;
+        #  ORDER BY `user.updated_at` ASC, `user.id` ASC
+        #  LIMIT $limit;
         # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
         splitName: true
         # Normalize date of birth value to the output format if possible
@@ -761,11 +781,15 @@ dbsync:
           outputFormat: "02.01.2006" # DD.MM.YYYY
         valueMapping:
           # This allows to map values to different values for FiveNet
-          # E.g., the sex of a char must be either `m`, `f`, or `d`
+          # E.g., the sex of a char must be either `f`, `m`, or `d`
           sex:
             fallback: 'm'
             values:
-              '1': 'f'
+              'f': 'f'
+              'm': 'm'
+              # E.g., if your server uses `male` and `female` instead of `m` and `f`, you can map them like this:
+              #'female': 'f'
+              #'male': 'm'
         # If the firstname or lastname is empty or null, do not sync the user at all
         ignoreEmptyNames: true
         # Filters allow to modify certain values before they are sent to FiveNet
@@ -779,6 +803,9 @@ dbsync:
             #- pattern: '^ambulance$'
             #  action: replace
             #  replacement: 'ems'
+        # Interval in which a batch of the user data is "re-synced". A "step" is a single batch of users that is re-synced,
+        # to ensure eventual consistency of the data when an update has been missed for whatever reason.
+        resyncInterval: 12s
 
       # Licenses of a user
       userLicenses:
@@ -802,8 +829,7 @@ dbsync:
         #  WHERE
         #    `user_licenses`.`owner` = $identifier
         #  ORDER BY `type`
-        #  LIMIT $limit
-        #  OFFSET $offset;
+        #  LIMIT $limit;
 
       # Jobs of a user (if your users can have multiple jobs, e.g., a main job and a secondary job, it is recommended to enable and use this
       # and return the jobs in a separate query to prevent data duplication and potential performance issues,
@@ -826,8 +852,7 @@ dbsync:
         #  WHERE
         #    `user_jobs`.`owner` = $identifier
         #  ORDER BY `owner`
-        #  LIMIT $limit
-        #  OFFSET $offset;
+        #  LIMIT $limit;
 
       # User Phone Numbers (if your users can have multiple phone numbers,
       # it is recommended to enable and use this
@@ -867,6 +892,7 @@ dbsync:
         #
         # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
         # `vehicle.plate`, `vehicle.type`
+        # `vehicle.updated_at` (timestamp/datetime column that is updated on update, used for incremental syncs)
         # Optional columns: `vehicle.model`, `vehicle.job` (for job specific vehicles)
         #query: |
         #  SELECT
@@ -874,16 +900,23 @@ dbsync:
         #    `plate` AS `vehicle.plate`,
         #    `type` AS `vehicle.type`,
         #    `model` AS `vehicle.model`
+        #    `updated_at` AS `vehicle.updated_at`
         #  FROM
         #    `owned_vehicles`
-        #  ORDER BY `vehicle.plate`
-        #  LIMIT $limit
-        #  OFFSET $offset;
+        #  $whereCondition
+        #  ORDER BY `vehicle.updated_at` ASC, `vehicle.plate` ASC
+        #  LIMIT $limit;
+        #
+        # Interval in which a batch of vehicles data is "re-synced". A "step" is a single batch of vehicles that is re-synced,
+        # to ensure eventual consistency of the data when an update has been missed for whatever reason.
+        resyncInterval: 30s
 
       # Accounts - Used to, e.g., sync group(s) by license, to accounts.
       accounts:
         enabled: false
         tableName: "admin_accounts"
+        # Sync all accounts every X interval, to ensure eventual consistency of the data when an update has been missed for whatever reason.
+        syncInterval: "1m"
         # By default the dbsync will attempt to add the column if it does not exist, but you can
         # disable that by commenting this out. It is recommended to leave it enabled, for
         # performance reasons.
@@ -891,20 +924,19 @@ dbsync:
         # Query to retrieve account data (example query to show how to retrieve
         # account primary group and sub groups (using `JSON_*` funcs)).
         #
-        # Must return result columns named: `account.license`, `account.group` (primary group)
-        # Optional columns: `account.groups` (comma-separated list of groups, if `account.group` is
-        # empty `account.group` is used)
+        # Must return result columns named: `account_update.license`, `account_update.group` (primary group)
+        # Optional columns: `account_update.groups` (comma-separated list of groups, if `account_update.group` is
+        # empty `account_update.group` is used)
         query: "" # Query to retrieve all accounts
         #  SELECT
-        #    `license` AS `account.license`,
-        #    `group` AS `account.group`,
-        #    JSON_KEYS(NULLIF(`sub_groups`, '')) AS `account.groups`
+        #    `license` AS `account_update.license`,
+        #    `group` AS `account_update.group`,
+        #    JSON_KEYS(NULLIF(`sub_groups`, '')) AS `account_update.groups`
         #  FROM
         #    `admin_accounts`
         #  $whereCondition
         #  ORDER BY `license`
-        #  LIMIT $limit
-        #  OFFSET $offset;
+        #  LIMIT $limit;
 
     tableManager:
       # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.
@@ -913,11 +945,13 @@ dbsync:
     # Limit the amount of data to sync per query, this is useful to prevent syncing too much data at once which can cause performance issues or timeouts.
     # The default numbers are the maximum allowed by the sync API, you can lower them if you experience performance issues or timeouts, but you cannot increase them above these values.
     limits:
+      # Base data
       jobs: 200
       licenses: 200
+      # Main data
+      accounts: 200
       users: 150
-      vehicles: 500
-      accounts: 100
+      vehicles: 400
 
 # -- NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values
 nats:

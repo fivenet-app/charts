@@ -36,10 +36,13 @@ securityContext:
 service:
   type: ClusterIP
 
+# -- Global node selector applied to all FiveNet pods. Component-specific selectors are merged with this value and can override matching keys.
 nodeSelector: {}
 
+# -- Global tolerations applied to all FiveNet pods. Component-specific tolerations are appended to this list.
 tolerations: []
 
+# -- Global affinity applied to all FiveNet pods. Component-specific affinity is merged with this value and can override matching keys.
 affinity: {}
   # Example soft pod anti affinity rule
   #podAntiAffinity:
@@ -436,11 +439,23 @@ additionalVolumeMounts: []
 migration:
   # -- Specifies whether the migration job should be created
   enabled: true
+  # -- Node selector for the migration job. Merged with the global `nodeSelector`.
+  nodeSelector: {}
+  # -- Tolerations for the migration job. Appended to the global `tolerations`.
+  tolerations: []
+  # -- Affinity for the migration job. Merged with the global `affinity`.
+  affinity: {}
 
 server:
   enabled: true
   replicaCount: 1
   revisionHistoryLimit: 1
+  # -- Node selector for the server pods. Merged with the global `nodeSelector`.
+  nodeSelector: {}
+  # -- Tolerations for the server pods. Appended to the global `tolerations`.
+  tolerations: []
+  # -- Affinity for the server pods. Merged with the global `affinity`.
+  affinity: {}
   image:
     repository: ghcr.io/fivenet-app/fivenet
     pullPolicy: IfNotPresent
@@ -502,6 +517,12 @@ worker:
   enabled: true
   replicaCount: 1
   revisionHistoryLimit: 1
+  # -- Node selector for the worker pods. Merged with the global `nodeSelector`.
+  nodeSelector: {}
+  # -- Tolerations for the worker pods. Appended to the global `tolerations`.
+  tolerations: []
+  # -- Affinity for the worker pods. Merged with the global `affinity`.
+  affinity: {}
   image:
     repository: ghcr.io/fivenet-app/fivenet
     pullPolicy: IfNotPresent
@@ -543,6 +564,12 @@ discord:
   enabled: true
   replicaCount: 1
   revisionHistoryLimit: 1
+  # -- Node selector for the Discord bot pods. Merged with the global `nodeSelector`.
+  nodeSelector: {}
+  # -- Tolerations for the Discord bot pods. Appended to the global `tolerations`.
+  tolerations: []
+  # -- Affinity for the Discord bot pods. Merged with the global `affinity`.
+  affinity: {}
   image:
     repository: ghcr.io/fivenet-app/fivenet
     pullPolicy: IfNotPresent
@@ -584,6 +611,12 @@ dbsync:
   enabled: false
   replicaCount: 1
   revisionHistoryLimit: 1
+  # -- Node selector for the DBSync pods. Merged with the global `nodeSelector`.
+  nodeSelector: {}
+  # -- Tolerations for the DBSync pods. Appended to the global `tolerations`.
+  tolerations: []
+  # -- Affinity for the DBSync pods. Merged with the global `affinity`.
+  affinity: {}
   # -- Deployment strategy
   strategy:
     type: Recreate

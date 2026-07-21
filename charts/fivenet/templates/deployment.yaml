@@ -88,16 +88,5 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ include "fivenet.podScheduling" (dict "root" . "component" .Values.server) | indent 6 }}
 {{- end }}

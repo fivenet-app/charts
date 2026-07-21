@@ -71,3 +71,25 @@ Renders a structure, even values that contain template functions/logic.
     {{- tpl (.value | toYaml) .context }}
   {{- end }}
 {{- end -}}
+
+{{/*
+Render global scheduling config merged with a component-specific override.
+*/}}
+{{- define "fivenet.podScheduling" -}}
+{{- $root := .root -}}
+{{- $component := .component -}}
+{{- $nodeSelector := mergeOverwrite (deepCopy (default dict $root.Values.nodeSelector)) (default dict $component.nodeSelector) -}}
+{{- $affinity := mergeOverwrite (deepCopy (default dict $root.Values.affinity)) (default dict $component.affinity) -}}
+{{- $tolerations := concat (default list $root.Values.tolerations) (default list $component.tolerations) -}}
+{{- if $nodeSelector }}nodeSelector:
+{{- toYaml $nodeSelector | nindent 2 }}
+{{- end }}
+{{- if $affinity }}
+affinity:
+{{- toYaml $affinity | nindent 2 }}
+{{- end }}
+{{- if $tolerations }}
+tolerations:
+{{- toYaml $tolerations | nindent 2 }}
+{{- end }}
+{{- end -}}

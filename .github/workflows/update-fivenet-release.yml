@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          token: ${{ secrets.UPDATE_CHART_GH_PAT }}
 
       - name: Update Chart.yaml
         id: chart

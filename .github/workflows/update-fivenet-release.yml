@@ -1,0 +1,54 @@
+name: Update FiveNet Release
+
+on:
+  repository_dispatch:
+    types: [fivenet-release]
+
+permissions:
+  contents: write
+
+jobs:
+  update-chart:
+    name: Update FiveNet chart
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update Chart.yaml
+        id: chart
+        env:
+          APP_VERSION: ${{ github.event.client_payload.app_version }}
+        run: |
+          if [[ -z "$APP_VERSION" ]]; then
+            echo "Missing app_version in repository_dispatch payload"
+            exit 1
+          fi
+
+          chart_file=charts/fivenet/Chart.yaml
+          current_version="$(sed -n 's/^version: *//p' "$chart_file" | head -1)"
+
+          if [[ ! "$current_version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "Unsupported chart version: $current_version"
+            exit 1
+          fi
+
+          next_version="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.$((BASH_REMATCH[3] + 1))"
+
+          sed -i -E "s/^version: *.*/version: $next_version/" "$chart_file"
+          sed -i -E "s/^appVersion: *.*/appVersion: \"$APP_VERSION\"/" "$chart_file"
+
+          echo "chart_version=$next_version" >> "$GITHUB_OUTPUT"
+          git diff -- "$chart_file"
+
+      - name: Commit chart update
+        env:
+          CHART_VERSION: ${{ steps.chart.outputs.chart_version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add charts/fivenet/Chart.yaml
+          git commit -m "chore: release fivenet ${CHART_VERSION}"
+          git push origin HEAD:main

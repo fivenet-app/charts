@@ -31,3 +31,16 @@ jobs:
         uses: helm/chart-releaser-action@v1.7.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Notify application repository
+        env:
+          GH_TOKEN: ${{ secrets.FIVENET_REPO_TOKEN }}
+        run: |
+          chart_version="$(sed -n 's/^version: *//p' charts/fivenet/Chart.yaml | head -1)"
+          app_version="$(sed -n 's/^appVersion: *//p' charts/fivenet/Chart.yaml | head -1 | sed 's/^\"//; s/\"$//')"
+
+          gh api repos/fivenet-app/fivenet/dispatches \
+            --method POST \
+            -f event_type=chart-release \
+            -f "client_payload[chart_version]=$chart_version" \
+            -f "client_payload[app_version]=$app_version"

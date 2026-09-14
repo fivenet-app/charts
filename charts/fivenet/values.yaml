@@ -248,7 +248,7 @@ fivenet:
       # Whether literal public IP addresses may be used as image hosts.
       allowIPs: false
       # MinimumCacheDuration is the minimum duration for which proxied images should be cached. If not set, defaults to 60 minutes.
-      minimumCacheDuration: 30m
+      minimumCacheDuration: 60m
 
     audit:
       # RetentionDays specifies the number of days to retain audit logs before they are purged. Must be greater than or equal to 1.
@@ -371,13 +371,9 @@ fivenet:
             roleName: "Teamleitung"
             #permissions: 0
             #color: "#9B59B6"
-      # Sync job, grade, and qualification data to Discord roles.
+      # Sync nickname, job and grade information to Discord roles.
       userInfoSync:
         enabled: false
-        gradeRoleFormat: "[%grade%] %grade_label%"
-        employeeRoleFormat: "%s Employees"
-        unemployedRoleName: "Citizen"
-        jobsAbsceneRoleName: "Absent"
       # Sync qualifications to Discord roles.
       qualifications:
         enabled: true

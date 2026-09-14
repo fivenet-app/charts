@@ -120,14 +120,14 @@ fivenet:
         cron: "INFO"
         perms: "INFO"
 
-    # App-wide secret used to encrypt/decrypt stored data. Must be exactly 32 chars (bytes) long and separate from `jwt.secret`.
+    # Secret is the app-wide secret used to encrypt and decrypt stored data. It must contain exactly 32 random bytes and differ from JWT.Secret.
     secret: "your_generated_db_secret_32_char"
     # Skips startup checks for database and NATS connectivity. Use only when those services are intentionally unavailable at boot.
     ignoreRequirements: false
 
     jwt:
-      # JWT signing secret. Keep this separate from the root `secret` value and make it at least 32 characters long.
-      secret: "your_generated_jwt_secret"
+      # Secret is the JWT signing secret. It must contain at least 32 random bytes and differ from the app-wide Secret.
+      secret: "your_generated_jwt_secret_32char"
 
     http:
       listen: ":8080"
@@ -135,12 +135,6 @@ fivenet:
       adminListen: ":7070"
       # Canonical public base URL for the FiveNet instance, including the scheme and host.
       publicURL: "https://fivenet.example.com"
-      # Links configures optional legal links displayed by the frontend.
-      links:
-        # PrivacyPolicy is an optional URL to the privacy policy.
-        privacyPolicy: ""
-        # Imprint is an optional URL to the legal notice.
-        imprint: ""
       origins:
         # Allowed browser origins for the frontend and API. Add each origin explicitly.
         - "https://fivenet.example.com"
@@ -151,10 +145,30 @@ fivenet:
         #- "10.0.0.0/8" # Common Kubernetes cluster IP range
         #- "127.0.0.1" # Only for development
       sessions:
-        # Secret used to sign and encrypt session cookies. Keep it random and unique to this deployment.
-        cookieSecret: "your_generated_cookie_secret"
+        # CookieSecret signs and encrypts session cookies. It must contain at least 32 random bytes and be unique to this deployment.
+        cookieSecret: "your_generated_cookie_secret_32c"
         # Cookie domain used for session cookies. Set this to your app's root domain when sharing across subdomains.
         domain: "fivenet.example.com"
+
+    appConfig:
+      # Initial is applied and persisted only when the application configuration is first created.
+      initial:
+        # Website configures website settings.
+        website:
+          # Links configures optional legal links.
+          links:
+            privacyPolicy: ""
+            imprint: ""
+      # Override is applied in memory at every startup when enabled. It does not modify the database-backed configuration.
+      override:
+        # Enabled controls whether the override is applied.
+        enabled: false
+        # Website configures website settings.
+        website:
+          # Links configures optional legal links.
+          links: {}
+            #privacyPolicy: ""
+            #imprint: ""
 
     database:
       # Use either a DSN string or the individual host/port/username/password fields below.

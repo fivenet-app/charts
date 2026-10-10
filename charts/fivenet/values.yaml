@@ -1127,6 +1127,7 @@ dbsync:
 nats:
   # -- If disabled you must run your own Nats server or cluster.
   enabled: true
+
   config:
     cluster:
       enabled: true
@@ -1161,7 +1162,7 @@ nats:
       repository: docker.io/natsio/prometheus-nats-exporter
 
     podMonitor:
-      enabled: false # enable only if your have the prometheus-operator deployed
+      enabled: false # Enable only if your have the prometheus-operator deployed
       patch:
         - op: add
           path: /spec/podMetricsEndpoints/0/interval

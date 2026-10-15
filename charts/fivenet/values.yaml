@@ -138,7 +138,9 @@ fivenet:
       origins:
         # Allowed browser origins for the frontend and API. Add each origin explicitly.
         - "https://fivenet.example.com"
-        #- "http://localhost:3000" # Only for development
+        # Allow the default FiveM plugin NUI origin. If the resource is renamed, use
+        # https://cfx-nui-<resource-name> instead.
+        - "https://cfx-nui-fivenet"
       # Reverse-proxy IPs or CIDRs that are allowed to forward client IP and protocol headers.
       # In Kubernetes, it is often easier to allow the cluster range, e.g. `10.0.0.0/8`.
       trustedProxies: []

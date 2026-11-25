@@ -73,6 +73,20 @@ Renders a structure, even values that contain template functions/logic.
 {{- end -}}
 
 {{/*
+Render the FiveNet configuration file exactly as it is stored in the Secret.
+*/}}
+{{- define "fivenet.configYaml" -}}
+{{- tpl (.Values.fivenet.config | toYaml) . -}}
+{{- end -}}
+
+{{/*
+Render the DBSync configuration file exactly as it is stored in the Secret.
+*/}}
+{{- define "fivenet.dbsyncConfigYaml" -}}
+{{- tpl (.Values.dbsync.config | toYaml) . -}}
+{{- end -}}
+
+{{/*
 Render global scheduling config merged with a component-specific override.
 */}}
 {{- define "fivenet.podScheduling" -}}

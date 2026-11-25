@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/fivenet-config: {{ include (print $.Template.BasePath "/secrets.yaml") $ | sha256sum }}
+        checksum/fivenet-config: {{ include "fivenet.configYaml" . | sha256sum }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
